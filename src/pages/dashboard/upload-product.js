@@ -2,9 +2,29 @@ import { useEffect, useState } from "react"
 import Layout from "../layout";
 import { useRouter } from "next/router";
 import { FormControl, InputLabel, MenuItem, Select, Box, TextField, Checkbox, Button } from "@mui/material";
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 
+
+
+const schema = Yup.object().shape({
+    tempType: Yup.string().required("This Field is Required !!"),
+    subCat: Yup.string().required("This Field is Required !!"),
+    name: Yup.string().required("This Field is Required !!").min(2).max(32),
+    version: Yup.string().required("This Field is Required !!"),
+    description: Yup.string().required("This Field is Required !!").min(80).max(5000),
+    varient: Yup.string().required("This Field is Required !!").min(3).max(100),
+    filePassword: Yup.string().required("This Field is Required !!").min(2).max(50),
+
+
+});
 
 export default function UploadProduct() {
+    const { register, handleSubmit, setValue, formState: { errors }, reset, clearErrors } = useForm({
+        resolver: yupResolver(schema),
+    });
+
     const router = useRouter();
     let [paid, setPaid] = useState(false);
     let [masterCategory, setMasterCategory] = useState([]);
@@ -52,8 +72,8 @@ export default function UploadProduct() {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
-                    'token' : localToken
-                  }
+                    'token': localToken
+                }
             })
                 .then(response => response.json())
                 .then(async result => {
@@ -77,8 +97,8 @@ export default function UploadProduct() {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
-                    'token' : localToken
-                  }
+                    'token': localToken
+                }
             })
                 .then(response => response.json())
                 .then(async result => {
@@ -102,8 +122,8 @@ export default function UploadProduct() {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
-                    'token' : localToken
-                  }
+                    'token': localToken
+                }
             })
                 .then(response => response.json())
                 .then(async result => {
@@ -127,8 +147,8 @@ export default function UploadProduct() {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
-                    'token' : localToken
-                  }
+                    'token': localToken
+                }
             })
                 .then(response => response.json())
                 .then(async result => {
@@ -145,7 +165,15 @@ export default function UploadProduct() {
         }
     }
 
-    const handleSubmit = (e) => {
+    const selectCategory = (e) => {
+        setValue('tempType', e)
+        clearErrors('tempType')
+
+        setValue('subCat', e)
+        clearErrors('subCat')
+    }
+
+    const onSubmitHandler = (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const localToken = localStorage.getItem('token');
@@ -177,23 +205,25 @@ export default function UploadProduct() {
 
     return (
         <>
-            <form style={{ maxWidth: "800px", width: "100%" }} encType="multipart/form-data" onSubmit={handleSubmit}>
+            <form style={{ maxWidth: "800px", width: "100%" }} encType="multipart/form-data" onSubmit={handleSubmit(onSubmitHandler)}>
                 <h1>Upload Product</h1>
                 <FormControl fullWidth sx={{ mt: 5 }} >
                     <InputLabel id="categorySelect">Select Template Type</InputLabel>
-                    <Select label="category" name="category" labelId="categorySelect" onChange={(e) => { getSubcategory(e); getSoftwareType(e); setTemplateType(parseInt(e.target.value)) }}>
+                    <Select {...register("tempType")} label="category" name="category" labelId="categorySelect" onChange={(e) => { getSubcategory(e); getSoftwareType(e); setTemplateType(parseInt(e.target.value)) }}>
                         {masterCategory !== undefined && masterCategory.length > 0 && masterCategory.map((item) => {
-                            return <MenuItem key={item?.id} value={item?.id}>{item?.category}</MenuItem>
+                            return <MenuItem key={item?.id} value={item?.id} onClick={(e) => selectCategory(item?.category)}>{item?.category}</MenuItem>
                         })}
                     </Select>
+                    {errors.tempType && <p>{errors.tempType.message}</p>}
                 </FormControl>
                 {templateType === 1 ? <FormControl fullWidth sx={{ mt: 2 }}>
                     <InputLabel id="subCategorySelect">Template SubCategory</InputLabel>
-                    <Select label="Template SubCategory" name="subCategory" labelId="subCategorySelect" >
+                    <Select {...register("subCat")} label="Template SubCategory" name="subCategory" labelId="subCategorySelect" >
                         {masterSubCategory !== undefined && masterSubCategory.length > 0 && masterSubCategory.map((item) => {
-                            return <MenuItem value={item?.id}>{item?.subCategory}</MenuItem>
+                            return <MenuItem value={item?.id} onClick={(e) => selectCategory(item?.category)}>{item?.subCategory}</MenuItem>
                         })}
                     </Select>
+                    {errors.subCat && <p>{errors.subCat.message}</p>}
                 </FormControl> : <Box sx={{ mt: 2 }}>
                     <h3>Technology Type</h3>
                     {masterSubCategory !== undefined && masterSubCategory.length > 0 && masterSubCategory.map((item) => {
@@ -228,12 +258,15 @@ export default function UploadProduct() {
                     })}
                 </Box>
 
-                <TextField fullWidth label="Name" variant="outlined" type="text" sx={{ mt: 2 }} name="name" />
-                <TextField fullWidth label="Version" variant="outlined" type="text" sx={{ mt: 2 }} name="version" />
+                <TextField {...register("name")} fullWidth label="Name" variant="outlined" type="text" sx={{ mt: 2 }} name="name" />
+                {errors.name && <p>{errors.name.message}</p>}
+                <TextField {...register("version")} fullWidth label="Version" variant="outlined" type="text" sx={{ mt: 2 }} name="version" />
+                {errors.version && <p>{errors.version.message}</p>}
 
                 <Box sx={{ mt: 2 }} >
                     <h2 style={{ marginBottom: '16px' }}>Description</h2>
-                    <textarea name="description" style={{ width: "100%", minHeight: "150px" }} />
+                    <textarea {...register("description")} name="description" style={{ width: "100%", minHeight: "150px" }} />
+                    {errors.description && <p>{errors.description.message}</p>}
                 </Box>
 
                 <Box sx={{ mt: 2 }} >
@@ -291,7 +324,8 @@ export default function UploadProduct() {
                 <input variant="outlined" type="file" name="sourceFile" />
 
                 <Box sx={{ mt: 2 }}>Source File Password</Box>
-                <TextField fullWidth variant="outlined" type="text" name="sourceFilePassword" />
+                <TextField {...register("filePassword")} fullWidth variant="outlined" type="text" name="sourceFilePassword" />
+                {errors.filePassword && <p>{errors.filePassword.message}</p>}
 
                 <Box sx={{ mt: 2 }}>Slider Images</Box>
                 <input variant="outlined" type="file" multiple={true} name="sliderImages" />
