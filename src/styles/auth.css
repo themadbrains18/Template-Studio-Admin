@@ -1,0 +1,20 @@
+.auth_page_wrap{
+    display: grid;
+    place-items: center;
+    /* min-height: 100vh; */
+    padding: 0px 0px 20px 0px;
+}
+
+.header{
+    padding: 20px;
+    justify-content: right;
+}
+
+.forget{
+    display: flex;
+    justify-content: right;
+}
+
+.editIcon{
+    cursor: pointer;
+}
