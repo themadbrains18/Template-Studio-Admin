@@ -22,7 +22,7 @@ export default function Login() {
 
   let handleSubmit = (e)=>{
     e.preventDefault();
-    fetch("http://localhost:7777/api/auth/forgetpassword",{
+    fetch(`${process.env.NEXT_PUBLIC_APIURL}auth/forgetpassword`,{
       method : "POST",  
       headers: {
         'Content-Type': 'application/json'

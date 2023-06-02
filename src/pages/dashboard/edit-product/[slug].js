@@ -47,7 +47,7 @@ export default function EditProduct({ content }) {
     const [defaultSubCategory, setDefaultSubCategory] = useState([]);
     const [defaultDropdownSubCategory, setDefaultDropdownSubCategory] = useState(1);
     const [defaultSoftwareType, setDefaultSoftwareType] = useState(1);
-    const [defaultProductType, setDefaultProductType] = useState(1);
+    const [defaultProductType, setDefaultProductType] = useState('');
     const [defaultIndustry, setDefaultIndustry] = useState([]);
     const [sliderImages, setSliderImages] = useState([]);
     const [fullPageImages, setFullPageImages] = useState([]);
@@ -74,7 +74,7 @@ export default function EditProduct({ content }) {
     const getProductDetailBySlug = async () => {
         try {
             const localToken = localStorage.getItem('token');
-            await fetch(`http://localhost:7777/api/dashboard/detail/${slug}`, {
+            await fetch(`${process.env.NEXT_PUBLIC_APIURL}dashboard/detail/${slug}`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ export default function EditProduct({ content }) {
 
                         setTemplateType(parseInt(result?.data?.templatecategories[0]?.categoryId));
 
-                        setDefaultProductType(result?.data?.producttype);
+                        setDefaultProductType(result?.data?.productType);
 
                         await getSubcategory(parseInt(result?.data?.templatecategories[0]?.categoryId));
                         await getSoftwareType(parseInt(result?.data?.templatecategories[0]?.categoryId));
@@ -144,7 +144,7 @@ export default function EditProduct({ content }) {
     const getCategory = async () => {
         try {
             const localToken = localStorage.getItem('token');
-            await fetch("http://localhost:7777/api/category/all", {
+            await fetch(`${process.env.NEXT_PUBLIC_APIURL}category/all`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -169,7 +169,7 @@ export default function EditProduct({ content }) {
     const getIndustry = async () => {
         try {
             const localToken = localStorage.getItem('token');
-            await fetch("http://localhost:7777/api/industry/all", {
+            await fetch(`${process.env.NEXT_PUBLIC_APIURL}industry/all`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -194,7 +194,7 @@ export default function EditProduct({ content }) {
     const getProductType = async () => {
         try {
             const localToken = localStorage.getItem('token');
-            await fetch("http://localhost:7777/api/producttype/all", {
+            await fetch(`${process.env.NEXT_PUBLIC_APIURL}producttype/all`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -219,7 +219,7 @@ export default function EditProduct({ content }) {
     const getSubcategory = async (id) => {
         try {
             const localToken = localStorage.getItem('token');
-            await fetch(`http://localhost:7777/api/subcategory/getById?id=${id}`, {
+            await fetch(`${process.env.NEXT_PUBLIC_APIURL}subcategory/getById?id=${id}`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -244,7 +244,7 @@ export default function EditProduct({ content }) {
     const getSoftwareType = async (id) => {
         try {
             const localToken = localStorage.getItem('token');
-            await fetch(`http://localhost:7777/api/software/getByCategoryId?id=${id}`, {
+            await fetch(`${process.env.NEXT_PUBLIC_APIURL}software/getByCategoryId?id=${id}`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',

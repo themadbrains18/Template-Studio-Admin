@@ -22,7 +22,7 @@ export default function Signup() {
 
   let handleSubmit = (e)=>{
     e.preventDefault();
-    fetch("http://localhost:7777/api/auth/setpassword",{
+    fetch(`${process.env.NEXT_PUBLIC_APIURL}auth/setpassword`,{
       method : "POST",  
       headers: {
         'Content-Type': 'application/json'

@@ -20,7 +20,7 @@ export default function HtmlProduct() {
 
     const getCategory = async () => {
         try {
-            await fetch("http://localhost:7777/api/category/all", {
+            await fetch(`${process.env.NEXT_PUBLIC_APIURL}category/all`, {
                 method: "GET"
             })
                 .then(response => response.json())
@@ -40,7 +40,7 @@ export default function HtmlProduct() {
 
     const getIndustry = async () => {
         try {
-            await fetch("http://localhost:7777/api/industry/all", {
+            await fetch(`${process.env.NEXT_PUBLIC_APIURL}industry/all`, {
                 method: "GET"
             })
                 .then(response => response.json())
@@ -60,7 +60,7 @@ export default function HtmlProduct() {
 
     const getProductType = async()=>{
         try {
-            await fetch("http://localhost:7777/api/producttype/all", {
+            await fetch(`${process.env.NEXT_PUBLIC_APIURL}producttype/all`, {
                 method: "GET"
             })
                 .then(response => response.json())
@@ -80,7 +80,7 @@ export default function HtmlProduct() {
 
     const getSubcategory = async (e) => {
         try {
-            await fetch(`http://localhost:7777/api/subcategory/all?id=${e.target.value}`, {
+            await fetch(`${process.env.NEXT_PUBLIC_APIURL}subcategory/all?id=${e.target.value}`, {
                 method: "GET"
             })
                 .then(response => response.json())
@@ -100,7 +100,7 @@ export default function HtmlProduct() {
 
     const getSoftwareType = async (e) => {
         try {
-            await fetch(`http://localhost:7777/api/software/all?id=${e.target.value}`, {
+            await fetch(`${process.env.NEXT_PUBLIC_APIURL}software/all?id=${e.target.value}`, {
                 method: "GET"
             })
                 .then(response => response.json())
@@ -121,7 +121,7 @@ export default function HtmlProduct() {
     const handleSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
-        fetch("http://localhost:7777/dashboard/upload", {
+        fetch(`${process.env.NEXT_PUBLIC_APIURL}dashboard/upload`, {
             method: "POST",
             body: formData
         })

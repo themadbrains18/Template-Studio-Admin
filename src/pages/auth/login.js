@@ -30,7 +30,7 @@ export default function Login() {
 
   let handleSubmit = (e)=>{
     e.preventDefault();
-    fetch("http://localhost:7777/api/auth/login",{
+    fetch(`${process.env.NEXT_PUBLIC_APIURL}auth/login`,{
       method : "POST",  
       headers: {
         'Content-Type': 'application/json'
@@ -40,7 +40,7 @@ export default function Login() {
     .then(response=>response.json())
     .then(async result=>{
       if(result.success){
-        localStorage.setItem("token",result.token)
+        localStorage.setItem("token",result?.obj?.access_token)
         router.push("/dashboard");
       }else{
         if(result.message){
