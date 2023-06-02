@@ -22,7 +22,7 @@ export default function Dashboard({ children }) {
         .then(async result => {
           if (!result.success) {
             if (result.message) {
-              alert(result.message);
+              // alert(result.message);
             } else {
               alert(`There is some Error Please Try Again later`)
             }

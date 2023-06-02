@@ -44,7 +44,6 @@ export default function Login() {
         router.push("/dashboard");
       }else{
         if(result.message){
-          alert(result.message);
         }else{
           alert(`There is some Error Please Try Again later`)    
         }
