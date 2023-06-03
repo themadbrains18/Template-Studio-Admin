@@ -37,12 +37,12 @@ export default function OtpVerify() {
         if(result.message){
           alert(result.message);
         }else{
-          alert(`There is some Error Please Try Again later`);
+          ;
         }
       }
     }
     catch(err){
-      alert(`There is some Error Please Try Again later`);
+      ;
     }
   }
 
@@ -63,12 +63,12 @@ export default function OtpVerify() {
         if(result.message){
           alert(result.message);
         }else{
-          alert(`There is some Error Please Try Again later`);
+          ;
         }
       }
     }
     catch(err){
-      alert(`There is some Error Please Try Again later`);
+      ;
     }
   }
 

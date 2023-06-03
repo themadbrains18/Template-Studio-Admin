@@ -24,14 +24,14 @@ export default function Dashboard({ children }) {
             if (result.message) {
               // alert(result.message);
             } else {
-              alert(`There is some Error Please Try Again later`)
+              
             }
             router.push("/auth/login");
           }
         })
         .catch(err => {
           console.log(err)
-          alert(`There is some Error Please Try Again later`)
+          
           router.push("/auth/login");
         });
     }

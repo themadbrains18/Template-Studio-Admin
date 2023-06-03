@@ -38,7 +38,7 @@ export default function Index() {
         })
         .catch(err => {
           console.log(err)
-          alert(`There is some Error Please Try Again later`)
+          
         })
     } catch (error) {
 

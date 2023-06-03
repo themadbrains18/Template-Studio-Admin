@@ -60,6 +60,7 @@ const schema = Yup.object().shape({
             iconUrl: Yup.string().required("Icon url is required"),
         })
     ).required(),
+    price: Yup.number().required('This field is required'),
 
 });
 
@@ -129,7 +130,7 @@ export default function UploadProduct() {
                 })
                 .catch(err => {
                     console.log(err)
-                    alert(`There is some Error Please Try Again later`)
+                    
                 })
         } catch (error) {
 
@@ -154,7 +155,7 @@ export default function UploadProduct() {
                 })
                 .catch(err => {
                     console.log(err)
-                    alert(`There is some Error Please Try Again later`)
+                    
                 })
         } catch (error) {
 
@@ -179,7 +180,7 @@ export default function UploadProduct() {
                 })
                 .catch(err => {
                     console.log(err)
-                    alert(`There is some Error Please Try Again later`)
+                    
                 })
         } catch (error) {
 
@@ -204,7 +205,7 @@ export default function UploadProduct() {
                 })
                 .catch(err => {
                     console.log(err)
-                    alert(`There is some Error Please Try Again later`)
+                    
                 })
         } catch (error) {
 
@@ -229,7 +230,7 @@ export default function UploadProduct() {
                 })
                 .catch(err => {
                     console.log(err)
-                    alert(`There is some Error Please Try Again later`)
+                    
                 })
         } catch (error) {
 
@@ -327,13 +328,13 @@ export default function UploadProduct() {
                     if (result.message) {
                         alert(result.message);
                     } else {
-                        alert(`There is some Error Please Try Again later`)
+                        
                     }
                 }
             })
             .catch(err => {
                 console.log(err)
-                alert(`There is some Error Please Try Again later`)
+                
             })
     }
 
@@ -409,19 +410,10 @@ export default function UploadProduct() {
 
                 <Box sx={{ mt: 2 }} >
                     <h3 style={{ marginBottom: '16px' }}>Fonts Used</h3>
-                    {/* <Box style={{ display: 'flex', gap: '50px' }}>
-                        <TextField {...register(`font[0].fontName`, { required: true })} fullWidth label="Font Name" variant="outlined" type="text" name="fontName[0]" />
-                        <TextField {...register(`font[0].fontUrl`, { required: true })} fullWidth label="Paste Font URl here" variant="outlined" type="text" name="fontUrl[0]" />
-
-                    </Box>
-                    <Box style={{ display: 'flex', gap: '50px' }}>
-                        <TextField {...register("font[1].fontName")} fullWidth label="Font Name" variant="outlined" type="text" sx={{ mt: 2 }} name="fontName[1]" />
-                        <TextField {...register("font[1].fontUrl")} fullWidth label="Paste Font URl here" variant="outlined" type="text" sx={{ mt: 2 }} name="fontUrl[1]" />
-                    </Box> */}
 
                     {fontfields.map((field, index) => (
                         <div className="box" key={field.id}>
-                            <Box style={{ display: 'flex', gap: '50px', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box style={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Box style={{ width: '50%' }}>
                                     <TextField fullWidth label="Font Name" variant="outlined" type="text" sx={{ mt: 2 }} name={`font.${index}.fontName`}
                                         placeholder="Enter Name"
@@ -455,18 +447,18 @@ export default function UploadProduct() {
                         </div>
                     ))}
                     <h3 style={{ marginTop: '16px' }}>Images</h3>
-                    {/* <Box style={{ display: 'flex', gap: '50px' }}>
+                    {/* <Box style={{ display: 'flex', gap: '20px' }}>
                         <TextField fullWidth label="Image Name" variant="outlined" type="text" sx={{ mt: 2 }} name="imagesWebsiteName[0]" />
                         <TextField fullWidth label="Paste Image URl here" variant="outlined" type="text" sx={{ mt: 2 }} name="imagesUrl[0]" />
                     </Box>
-                    <Box style={{ display: 'flex', gap: '50px' }} >
+                    <Box style={{ display: 'flex', gap: '20px' }} >
                         <TextField fullWidth label="Image Name" variant="outlined" type="text" sx={{ mt: 2 }} name="imagesWebsiteName[1]" />
                         <TextField fullWidth label="Paste Image URl here" variant="outlined" type="text" sx={{ mt: 2 }} name="imagesUrl[1]" />
                     </Box> */}
 
                     {imagefields.map((field, index) => (
                         <div className="box" key={field.id}>
-                            <Box style={{ display: 'flex', gap: '50px', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box style={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Box style={{ width: '50%' }}>
                                     <TextField fullWidth label="Image Name" variant="outlined" type="text" sx={{ mt: 2 }}
                                         placeholder="Enter Name"
@@ -499,19 +491,19 @@ export default function UploadProduct() {
                     ))}
 
                     <h3 style={{ marginTop: '16px' }}>Icons</h3>
-                    {/* <Box style={{ display: 'flex', gap: '50px' }} >
+                    {/* <Box style={{ display: 'flex', gap: '20px' }} >
 
                         <TextField fullWidth label="Icon Name" variant="outlined" type="text" sx={{ mt: 2 }} name="iconsWebsiteName[0]" />
                         <TextField fullWidth label="Paste Icon URL here" variant="outlined" type="text" sx={{ mt: 2 }} name="iconsUrl[0]" />
                     </Box>
-                    <Box style={{ display: 'flex', gap: '50px' }} >
+                    <Box style={{ display: 'flex', gap: '20px' }} >
                         <TextField fullWidth label="Icon Name" variant="outlined" type="text" sx={{ mt: 2 }} name="iconsWebsiteName[1]" />
                         <TextField fullWidth label="Paste Icon URl here" variant="outlined" type="text" sx={{ mt: 2 }} name="iconsUrl[1]" />
                     </Box> */}
 
                     {iconfields.map((field, index) => (
                         <div className="box" key={field.id}>
-                            <Box style={{ display: 'flex', gap: '50px', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box style={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Box style={{ width: '50%' }}>
                                     <TextField fullWidth label="Icon Name" variant="outlined" type="text" sx={{ mt: 2 }}
                                         placeholder="Enter Name"
@@ -546,23 +538,23 @@ export default function UploadProduct() {
 
                 <Box sx={{ mt: 2 }} >
                     <h2 style={{ marginTop: '16px' }}>Technical Details</h2>
-                    {/* <Box style={{ display: 'flex', gap: '50px' }} >
+                    {/* <Box style={{ display: 'flex', gap: '20px' }} >
                         <TextField fullWidth label="item1" variant="outlined" type="text" sx={{ mt: 2 }} name="technical[0]" />
                         <TextField fullWidth label="item2" variant="outlined" type="text" sx={{ mt: 2 }} name="technical[1]" />
                     </Box>
 
-                    <Box style={{ display: 'flex', gap: '50px' }} >
+                    <Box style={{ display: 'flex', gap: '20px' }} >
                         <TextField fullWidth label="item3" variant="outlined" type="text" sx={{ mt: 2 }} name="technical[2]" />
                         <TextField fullWidth label="item4" variant="outlined" type="text" sx={{ mt: 2 }} name="technical[3]" />
                     </Box>
-                    <Box style={{ display: 'flex', gap: '50px' }} >
+                    <Box style={{ display: 'flex', gap: '20px' }} >
                         <TextField fullWidth label="item5" variant="outlined" type="text" sx={{ mt: 2 }} name="technical[4]" />
                         <TextField fullWidth label="item6" variant="outlined" type="text" sx={{ mt: 2 }} name="technical[5]" />
                     </Box> */}
 
                     {technicalfields.map((field, index) => (
                         <div className="box" key={field.id}>
-                            <Box style={{ display: 'flex', gap: '50px', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box className="technical" style={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Box style={{ width: '100%' }}>
                                     <TextField fullWidth label="Technical Name" variant="outlined" type="text" sx={{ mt: 2 }}
                                         placeholder="Technical Name"
@@ -615,7 +607,7 @@ export default function UploadProduct() {
                 <Box sx={{ mt: 2 }} >
                     Paid
                     <Checkbox checked={paid} onChange={() => setPaid(!paid)} name="paid" />
-                    {paid && <TextField fullWidth label="Price in Doller" variant="outlined" type="number" name="price" />}
+                    {paid && <TextField fullWidth label="Price in Doller" variant="outlined" type="number" name="price" {...register("price")} />}
                 </Box>
 
                 <Button variant="contained" size="large" sx={{ mt: 3 }} type="submit">Submit</Button>

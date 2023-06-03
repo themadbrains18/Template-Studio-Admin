@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import Layout from "../../layout";
 import { useRouter } from "next/router";
 import { FormControl, InputLabel, MenuItem, Select, Box, TextField, Checkbox, Button } from "@mui/material";
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
@@ -21,7 +21,7 @@ const validationSchema = Yup.object().shape({
     seoKeywords: Yup.string().required('This field is required'),
     description: Yup.string().required('This field is required'),
     sourceFilePassword: Yup.string().required('This field is required'),
-    price: Yup.string().required('This field is required'),
+    price: Yup.number().required('This field is required'),
     fonts: Yup.array().required('this field is required'),
     fontUrl: Yup.array().required('this field is required'),
     imagesWebsiteName: Yup.array().required('this field is required'),
@@ -51,6 +51,12 @@ export default function EditProduct({ content }) {
     const [defaultIndustry, setDefaultIndustry] = useState([]);
     const [sliderImages, setSliderImages] = useState([]);
     const [fullPageImages, setFullPageImages] = useState([]);
+    const [tech, setTech] = useState([]);
+    const [font, setFont] = useState([]);
+    const [imag, setImag] = useState([]);
+    const [icon, setIcon] = useState([]);
+
+    const [dltFeild, setDltFeild] = useState(0);
 
     const [removedSlider, setRemoveSlider] = useState([]);
     const [removedFullPageImage, setRemovedFullPageImage] = useState([]);
@@ -59,7 +65,55 @@ export default function EditProduct({ content }) {
 
     const formOptions = { resolver: yupResolver(validationSchema) };
 
-    const { register, reset, setValue, formState } = useForm(formOptions);
+    const { register, control, reset, setValue, formState } = useForm(formOptions);
+
+
+
+
+
+    const { fields: fontfields, append: fontappend, remove: fontremove } = useFieldArray({
+        control,
+        name: "font"
+    });
+
+    const { fields: imagefields, append: imageappend, remove: imageremove } = useFieldArray({
+        control,
+        name: "imagesNameUrl"
+    });
+
+    const { fields: iconfields, append: iconappend, remove: iconremove } = useFieldArray({
+        control,
+        name: "icons"
+    });
+
+    const { fields: technicalfields, append: technicalappend, remove: technicalremove } = useFieldArray({
+        control,
+        name: "technical"
+    });
+
+    // let deleteInput =()=>{
+    //     if(dltFeild===false){
+    //         if(idx==)
+    //     }
+    // }
+
+    // dddd = (selectedItem) => {
+    //     const { listofdata } = this.state;
+
+    //     const newList = [ ...listofdata ];
+
+    //     const itemIndex = newList.findIndex(item => item.name === selectedItem.name);
+
+    //     if (itemIndex > -1) {
+    //       newList.splice(itemIndex, 1);
+    //     } else {
+    //       newList.push(selectedItem);
+    //     }
+
+    //     this.setState({
+    //       listofdata: newList,
+    //     })
+    //   }
 
     useEffect(() => {
         getCategory();
@@ -110,8 +164,13 @@ export default function EditProduct({ content }) {
 
                         result?.data?.technical.map((item, index) => {
                             setValue(`technical[${index}]`, item);
+                            console.log(index, "tech========");
                         })
-
+                        
+                        setFont(result?.data?.fonts);
+                        setImag(result?.data?.images);
+                        setIcon(result?.data?.icons);
+                        setTech(result?.data?.technical);
                         setSliderImages(result?.data?.sliderimages);
                         setFullPageImages(result?.data?.fullimages)
 
@@ -129,12 +188,11 @@ export default function EditProduct({ content }) {
                         setDefaultDropdownSubCategory(result?.data?.templatesubcategories[0]?.subcategoryId);
                         setDefaultSubCategory(result?.data?.templatesubcategories);
                         setDefaultIndustry(result?.data?.templateindrusties);
-
                     }
                 })
                 .catch(err => {
                     console.log(err)
-                    alert(`There is some Error Please Try Again later`)
+
                 })
         } catch (error) {
 
@@ -159,7 +217,7 @@ export default function EditProduct({ content }) {
                 })
                 .catch(err => {
                     console.log(err)
-                    alert(`There is some Error Please Try Again later`)
+
                 })
         } catch (error) {
 
@@ -184,7 +242,7 @@ export default function EditProduct({ content }) {
                 })
                 .catch(err => {
                     console.log(err)
-                    alert(`There is some Error Please Try Again later`)
+
                 })
         } catch (error) {
 
@@ -209,7 +267,7 @@ export default function EditProduct({ content }) {
                 })
                 .catch(err => {
                     console.log(err)
-                    alert(`There is some Error Please Try Again later`)
+
                 })
         } catch (error) {
 
@@ -234,7 +292,7 @@ export default function EditProduct({ content }) {
                 })
                 .catch(err => {
                     console.log(err)
-                    alert(`There is some Error Please Try Again later`)
+
                 })
         } catch (error) {
 
@@ -259,19 +317,47 @@ export default function EditProduct({ content }) {
                 })
                 .catch(err => {
                     console.log(err)
-                    alert(`There is some Error Please Try Again later`)
+
                 })
         } catch (error) {
 
         }
     }
 
+    const removeTechField = (item) => {
+        console.log(item, "====");
+        let array = []
+        array = tech.filter(x => x !== item)
+        setTech(array)
+        console.log("==array", array);
+    }
+      const removeIconField = (item) => {
+        console.log(item, "====");
+
+        let array = []
+        array = icon.filter(x => x !== item)
+        setIcon(array)
+        console.log("==array", array);
+    }
+    // const addTechField = (idx)=>{
+    //     console.log(idx,"====itemd");
+    // //     let array=[];
+    // //    let newfield=array.push(idx);
+    // //     setTech(idx);
+    // //     console.log(newfield,"aaaaa")
+    //     // let array=[];
+    //     // array=tech.filter(x=>x!==item);
+    //     // setTech(array);
+    //     // console.log("====sdd", array);
+
+    // }
+
     const handleSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         formData.append('templateid', slug);
         formData.append('removedSlider', [removedSlider]);
-        formData.append('removedFullPageImage',[removedFullPageImage]);
+        formData.append('removedFullPageImage', [removedFullPageImage]);
         const localToken = localStorage.getItem('token');
 
         // return;
@@ -289,13 +375,13 @@ export default function EditProduct({ content }) {
                     if (result.message) {
                         alert(result.message);
                     } else {
-                        alert(`There is some Error Please Try Again later`)
+
                     }
                 }
             })
             .catch(err => {
                 console.log(err)
-                alert(`There is some Error Please Try Again later`)
+
             })
     }
 
@@ -380,7 +466,20 @@ export default function EditProduct({ content }) {
 
                 <Box sx={{ mt: 2 }} >
                     <h3 style={{ marginBottom: '16px' }}>Fonts Used</h3>
-                    <Box style={{ display: 'flex', gap: '50px' }}>
+                    {
+                        font.map((elm, idx) => {
+                            return <Box style={{ display: 'flex', gap: '50px', marginBottom: '10px' }}>
+                                <TextField fullWidth label="Font Name" variant="outlined" type="text" {...register(`fontName[${idx}]`)} name={`fontName${idx}`} InputLabelProps={{
+                                    shrink: true,
+                                }} />
+                                <TextField fullWidth label="Paste Font URl here" variant="outlined" type="text"  {...register(`fontUrl[${idx}]`)} name={`fontUrl${idx}`} InputLabelProps={{
+                                    shrink: true,
+                                }} />
+                            </Box>
+                        })
+                    }
+
+                    {/* <Box style={{ display: 'flex', gap: '50px' }}>
                         <TextField fullWidth label="Font Name" variant="outlined" type="text" {...register('fontName[0]')} name="fontName[0]" InputLabelProps={{
                             shrink: true,
                         }} />
@@ -395,10 +494,22 @@ export default function EditProduct({ content }) {
                         <TextField fullWidth label="Paste Font URl here" variant="outlined" type="text" {...register('fontUrl[1]')} sx={{ mt: 2 }} name="fontUrl[1]" InputLabelProps={{
                             shrink: true,
                         }} />
-                    </Box>
+                    </Box> */}
 
-                    <h3 style={{ marginTop: '16px' }}>Images</h3>
-                    <Box style={{ display: 'flex', gap: '50px' }}>
+                    <h3 style={{ marginTop: '16px', marginBottom: '16px' }}>Images</h3>
+                    {
+                        imag.map((elm, idx) => {
+                            return <Box style={{ display: 'flex', gap: '50px', marginBottom: '10px' }}>
+                                <TextField fullWidth label="Font Name" variant="outlined" type="text" {...register(`imagesWebsiteName[${idx}]`)} name={`imagesWebsiteName${idx}`} InputLabelProps={{
+                                    shrink: true,
+                                }} />
+                                <TextField fullWidth label="Paste Font URl here" variant="outlined" type="text"  {...register(`imagesUrl[${idx}]`)} name={`imagesUrl${idx}`} InputLabelProps={{
+                                    shrink: true,
+                                }} />
+                            </Box>
+                        })
+                    }
+                    {/* <Box style={{ display: 'flex', gap: '50px' }}>
                         <TextField fullWidth label="Image Name" variant="outlined" type="text" sx={{ mt: 2 }} {...register('imagesWebsiteName[0]')} name="imagesWebsiteName[0]" InputLabelProps={{
                             shrink: true,
                         }} />
@@ -413,9 +524,40 @@ export default function EditProduct({ content }) {
                         <TextField fullWidth label="Paste Image URl here" variant="outlined" type="text" sx={{ mt: 2 }} {...register('imagesUrl[1]')} name="imagesUrl[1]" InputLabelProps={{
                             shrink: true,
                         }} />
-                    </Box>
-                    <h3 style={{ marginTop: '16px' }}>Icons</h3>
-                    <Box style={{ display: 'flex', gap: '50px' }} >
+                    </Box> */}
+                    <h3 style={{ marginTop: '16px', marginBottom: '16px' }}>Icons</h3>
+                    {
+                        icon.map((elm, idx) => {
+                            
+                            return <div className="box" key={elm.id}>
+                                <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center' }} style={{ display: dltFeild === false ? 'none' : 'flex' }}>
+                                    <Box style={{ display: 'flex', gap: '20px', marginBottom: '10px', width:'100%'}}>
+                                        <TextField fullWidth label="Font Name" variant="outlined" name="icons" type="text" value={elm.iconName}   {...register(`icons.${idx}.iconUrl`)}  InputLabelProps={{
+                                            shrink: true,
+                                        }} />
+                                        <TextField fullWidth label="Paste Font URl here" variant="outlined" value={elm.iconUrl} name="icons" type="text" {...register(`icons.iconsUrl[${idx}]`)}  InputLabelProps={{
+                                            shrink: true,
+                                        }} />
+                                    </Box>
+                                    <Box>
+                                        <div className="btn-box">
+                                            <button className="mr10" onClick={() => {
+                                                // removeIconField(elm)
+                                                iconremove(idx)
+                                            }}>Remove </button>
+                                        </div>
+                                    </Box>
+                                </Box>
+                                <Box style={{ textAlign: 'right' }}>
+                                    <div className="btn-box">
+                                        {icon.length - 1 === idx && <button onClick={() => { iconappend({ name: '' }) }}>Add</button>}
+                                    </div>
+                                </Box>
+                            </div>
+                        })
+                    }
+
+                    {/* <Box style={{ display: 'flex', gap: '50px' }} >
 
                         <TextField fullWidth label="Icon Name" variant="outlined" type="text" sx={{ mt: 2 }} {...register('iconsWebsiteName[0]')} name="iconsWebsiteName[0]" InputLabelProps={{
                             shrink: true,
@@ -431,12 +573,42 @@ export default function EditProduct({ content }) {
                         <TextField fullWidth label="Paste Icon URl here" variant="outlined" type="text" sx={{ mt: 2 }} {...register('iconsUrl[1]')} name="iconsUrl[1]" InputLabelProps={{
                             shrink: true,
                         }} />
-                    </Box>
+                    </Box> */}
                 </Box>
 
                 <Box sx={{ mt: 2 }} >
                     <h2 style={{ marginTop: '16px' }}>Technical Details</h2>
-                    <Box style={{ display: 'flex', gap: '50px' }} >
+                    {console.log(tech, "==tech")}
+
+                    {
+                        tech.map((elm, idx) => {
+                            return <div className="box" key={elm.id} >
+                                <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center' }} style={{ display: dltFeild === false ? 'none' : 'flex' }}>
+                                    <Box style={{ width: '100%' }} >
+                                        <TextField fullWidth label={`item${idx}`} variant="outlined" type="text" sx={{ mt: 2 }} {...register(`technical[${idx}]`)} name={`technical${idx}`} InputLabelProps={{
+                                            shrink: true,
+                                        }} />
+                                    </Box>
+                                    <Box>
+                                        <div className="btn-box">
+                                            <button className="mr10" onClick={() => {
+                                                removeTechField(elm)
+                                                technicalremove(idx)
+                                            }}>Remove </button>
+                                        </div>
+                                    </Box>
+                                </Box>
+                                <Box style={{ textAlign: 'right' }}>
+                                    <div className="btn-box">
+                                        {tech.length - 1 === idx && <button onClick={() => { technicalappend({ name: '' }) }}>Add</button>}
+                                    </div>
+                                </Box>
+                            </div>
+                        })
+
+                    }
+
+                    {/* <Box style={{ display: 'flex', gap: '50px' }} >
                         <TextField fullWidth label="item1" variant="outlined" type="text" sx={{ mt: 2 }} {...register('technical[0]')} name="technical[0]" InputLabelProps={{
                             shrink: true,
                         }} />
@@ -459,7 +631,7 @@ export default function EditProduct({ content }) {
                         <TextField fullWidth label="item6" variant="outlined" type="text" sx={{ mt: 2 }} {...register('technical[5]')} name="technical[5]" InputLabelProps={{
                             shrink: true,
                         }} />
-                    </Box>
+                    </Box> */}
                 </Box>
 
                 <h2 style={{ marginTop: '16px' }}>Product Variant</h2>
@@ -492,13 +664,13 @@ export default function EditProduct({ content }) {
                                         <IconButton
                                             sx={{ color: 'rgba(255, 255, 255, 0.54)' }}
                                             aria-label={`info about`}
-                                            
+
                                         >
                                             <CancelIcon onClick={(e) => {
                                                 setSliderImages(sliderImages.filter(e => e.id !== item.id));
                                                 setRemoveSlider(oldArray => [...oldArray, item.id]);
                                             }
-                                            }/>
+                                            } />
                                         </IconButton>
                                     }
                                 />
@@ -524,7 +696,7 @@ export default function EditProduct({ content }) {
                                                 setFullPageImages(fullPageImages.filter(e => e.id !== item.id));
                                                 setRemovedFullPageImage(oldArray => [...oldArray, item.id]);
                                             }
-                                            }/>
+                                            } />
                                         </IconButton>
                                     }
                                 />

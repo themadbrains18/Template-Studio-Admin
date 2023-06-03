@@ -45,13 +45,13 @@ export default function Login() {
       }else{
         if(result.message){
         }else{
-          alert(`There is some Error Please Try Again later`)    
+              
         }
       }
     })
     .catch(err=>{
       console.log(err)
-      alert(`There is some Error Please Try Again later`)
+      
     })
   }
 

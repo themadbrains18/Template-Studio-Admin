@@ -39,13 +39,13 @@ export default function Signup() {
         if(result.message){
           alert(result.message);
         }else{
-          alert(`There is some Error Please Try Again later`)    
+              
         }
       }
     })
     .catch(err=>{
       console.log(err)
-      alert(`There is some Error Please Try Again later`)
+      
     })
   }
   const resendOtp = async ()=>{
@@ -65,12 +65,12 @@ export default function Signup() {
         if(result.message){
           alert(result.message);
         }else{
-          alert(`There is some Error Please Try Again later`);
+          ;
         }
       }
     }
     catch(err){
-      alert(`There is some Error Please Try Again later`);
+      ;
     }
   }
   return (
