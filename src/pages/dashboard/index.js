@@ -23,7 +23,7 @@ export default function Index() {
   const getAllProduct = async () => {
     try {
       const localToken = localStorage.getItem('token');
-      await fetch("http://localhost:7777/api/admin/dashboard/all", {
+      await fetch(`${process.env.NEXT_PUBLIC_APIURL}admin/dashboard/all`, {
         method: "GET",
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +60,8 @@ export default function Index() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Product Name</TableCell>
+              <TableCell>Template Name</TableCell>
+              <TableCell>Template Type</TableCell>
               <TableCell align="right">Version</TableCell>
               <TableCell align="right">Price</TableCell>
               <TableCell align="right">Action</TableCell>
@@ -69,15 +70,16 @@ export default function Index() {
           <TableBody>
             {allProducts.map((row) => (
               <TableRow
-                key={row.name}
+                key={row?.name}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.name}
+                  {row?.name}
                 </TableCell>
-                <TableCell align="right">{row.version}</TableCell>
-                <TableCell align="right">{row.price !=null ? `$${row.price}`:'Free'}</TableCell>
-                <TableCell align="right"><EditIcon className="editIcon" onClick={()=>{router.push(`/dashboard/edit-product/${row.id}`)}}/></TableCell>
+                <TableCell>{row?.templatecategories[0].category?.category}</TableCell>
+                <TableCell align="right">{row?.version}</TableCell>
+                <TableCell align="right">{row?.price !=null ? `$${row?.price}`:'Free'}</TableCell>
+                <TableCell align="right"><EditIcon className="editIcon" onClick={()=>{router.push(`/dashboard/edit-product/${row?.id}`)}}/></TableCell>
               </TableRow>
             ))}
           </TableBody>

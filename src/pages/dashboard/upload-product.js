@@ -115,7 +115,7 @@ export default function UploadProduct() {
     const getCategory = async () => {
         try {
             const localToken = localStorage.getItem('token');
-            await fetch("http://localhost:7777/api/category/all", {
+            await fetch(`${process.env.NEXT_PUBLIC_APIURL}category/all`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -140,7 +140,7 @@ export default function UploadProduct() {
     const getIndustry = async () => {
         try {
             const localToken = localStorage.getItem('token');
-            await fetch("http://localhost:7777/api/industry/all", {
+            await fetch(`${process.env.NEXT_PUBLIC_APIURL}industry/all`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -165,7 +165,7 @@ export default function UploadProduct() {
     const getProductType = async () => {
         try {
             const localToken = localStorage.getItem('token');
-            await fetch("http://localhost:7777/api/producttype/all", {
+            await fetch(`${process.env.NEXT_PUBLIC_APIURL}producttype/all`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -190,7 +190,7 @@ export default function UploadProduct() {
     const getSubcategory = async (e) => {
         try {
             const localToken = localStorage.getItem('token');
-            await fetch(`http://localhost:7777/api/subcategory/getById?id=${e.target.value}`, {
+            await fetch(`${process.env.NEXT_PUBLIC_APIURL}subcategory/getById?id=${e.target.value}`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -215,7 +215,7 @@ export default function UploadProduct() {
     const getSoftwareType = async (e) => {
         try {
             const localToken = localStorage.getItem('token');
-            await fetch(`http://localhost:7777/api/software/getByCategoryId?id=${e.target.value}`, {
+            await fetch(`${process.env.NEXT_PUBLIC_APIURL}software/getByCategoryId?id=${e.target.value}`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',

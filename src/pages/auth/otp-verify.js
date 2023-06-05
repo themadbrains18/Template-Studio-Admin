@@ -21,7 +21,7 @@ export default function OtpVerify() {
   const handleSubmit = async (e)=>{
     e.preventDefault();
     try{
-      let otpApi = await fetch("http://localhost:7777/api/auth/verify",{
+      let otpApi = await fetch(`${process.env.NEXT_PUBLIC_APIURL}auth/verify`,{
         method : "POST",
         headers: {
           'Content-Type': 'application/json'

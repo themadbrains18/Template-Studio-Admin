@@ -9,7 +9,7 @@ export default function Login() {
 
   useEffect(()=>{
     const localToken = localStorage.getItem('token');
-    if (localToken) {
+    if (localToken!==undefined && localToken!==null) {
       router.push("/dashboard")
     }
   },[])
@@ -30,7 +30,7 @@ export default function Login() {
 
   let handleSubmit = (e)=>{
     e.preventDefault();
-    fetch("http://localhost:7777/api/auth/login",{
+    fetch(`${process.env.NEXT_PUBLIC_APIURL}auth/login`,{
       method : "POST",  
       headers: {
         'Content-Type': 'application/json'
