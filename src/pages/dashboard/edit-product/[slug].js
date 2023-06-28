@@ -29,6 +29,8 @@ const validationSchema = Yup.object().shape({
     iconsWebsiteName: Yup.array().required('this field is required'),
     iconsUrl: Yup.array().required('this field is required'),
     technical: Yup.array().required('this field is required'),
+    productType: Yup.string().optional(),
+
 });
 
 
@@ -51,10 +53,10 @@ export default function EditProduct({ content }) {
     const [defaultIndustry, setDefaultIndustry] = useState([]);
     const [sliderImages, setSliderImages] = useState([]);
     const [fullPageImages, setFullPageImages] = useState([]);
-    const [tech, setTech] = useState([{ name: "" }]);
+    const [tech, setTech] = useState([]);
     const [font, setFont] = useState([{ fontName: "", fontUrl: "" }])
-    const [imag, setImag] = useState([{ imagesWebsiteName: "", imagesUrl: "" }])
-    const [icon, setIcon] = useState([{ name: "", iconsUrl: "" }])
+    const [imag, setImag] = useState([{ imageName: "", imageUrl: "" }])
+    const [icon, setIcon] = useState([{ iconName: "", iconUrl: "" }])
 
 
     const [dltFeild, setDltFeild] = useState(0);
@@ -68,29 +70,6 @@ export default function EditProduct({ content }) {
 
     const { register, control, reset, setValue, formState } = useForm(formOptions);
 
-
-
-    // const { fields: fontfields, append: fontappend, remove: fontremove } = useFieldArray({
-    //     control,
-    //     name: "font"
-    // });
-
-    // const { fields: imagefields, append: imageappend, remove: imageremove } = useFieldArray({
-    //     control,
-    //     name: "imagesNameUrl"
-    // });
-
-    // const { fields: iconfields, append: iconappend, remove: iconremove } = useFieldArray({
-    //     control,
-    //     name: "icons"
-    // });
-
-    // const { fields: technicalfields, append: technicalappend, remove: technicalremove } = useFieldArray({
-    //     control,
-    //     name: "technical"
-    // });
-
-    
     useEffect(() => {
         getCategory();
         getIndustry();
@@ -144,6 +123,7 @@ export default function EditProduct({ content }) {
 
                         setFont(result?.data?.fonts);
                         setImag(result?.data?.images);
+
                         setIcon(result?.data?.icons);
                         setTech(result?.data?.technical);
                         setSliderImages(result?.data?.sliderimages);
@@ -167,7 +147,6 @@ export default function EditProduct({ content }) {
                 })
                 .catch(err => {
                     console.log(err)
-
                 })
         } catch (error) {
 
@@ -300,80 +279,98 @@ export default function EditProduct({ content }) {
     }
 
     //  for Icons edit the Icons Details icons
-    let handleChange = (i, e) => {
+    let handleChange = (i, name, e) => {
         let newFormValues = [...icon];
-        newFormValues[i][e.target.name] = e.target.value;
+        // newFormValues[i][e.target.name] = e.target.value;
+        newFormValues[i][name] = e.target.value;
         setIcon(newFormValues);
     }
 
-    let addFormFields = () => {
+    let addFormFields = (id) => {
         setIcon([...icon, { iconName: "", iconUrl: "" }])
+        setValue(`iconsWebsiteName[${id}]`, '');
+        setValue(`iconsUrl[${id}]`, '');
     }
 
     let removeFormFields = (i) => {
-        console.log(i, "index of icon");
-        let newFormValues = [...icon];
-        newFormValues.splice(i, 1);
-        setIcon(newFormValues)
+        let iconsData = icon.filter((fruit, index) => index !== i);
+        setValue(`iconsWebsiteName[${i}]`, '');
+        setValue(`iconsUrl[${i}]`, '');
+        iconsData.map((item, index) => {
+            setValue(`iconsWebsiteName[${index}]`, item.iconName);
+            setValue(`iconsUrl[${index}]`, item.iconUrl)
+        })
+        setIcon(iconsData)
     }
 
-
     //  for font edit the font inputs
-    let handleChangeFont = (i, e) => {
+    let handleChangeFont = (i, name, e) => {
         let newFormValues = [...font];
-        newFormValues[i][e.target.name] = e.target.value;
+        newFormValues[i][name] = e.target.value;
         setFont(newFormValues);
     }
 
-    let addFormFieldsFont = () => {
+    let addFormFieldsFont = (id) => {
         setFont([...font, { fontName: "", fontUrl: "" }])
+        setValue(`fontName[${id}]`, '');
+        setValue(`fontUrl[${id}]`, '');
     }
 
     let removeFormFieldsFont = (i) => {
-        let newFormValues = [...font];
-        newFormValues.splice(i, 1);
-        setFont(newFormValues)
+        let fontsData = font.filter((fruit, index) => index !== i);
+        setValue(`fontName[${i}]`, '');
+        setValue(`fontUrl[${i}]`, '');
+        fontsData.map((item, index) => {
+            setValue(`fontName[${index}]`, item.fontName);
+            setValue(`fontUrl[${index}]`, item.fontUrl)
+        })
+        setFont(fontsData)
     }
 
-
     //  for Image edit the Images inputs
-    let handleChangeImage = (i, e) => {
+    let handleChangeImage = (i, name, e) => {
         let newFormValues = [...imag];
-        newFormValues[i][e.target.name] = e.target.value;
+        newFormValues[i][name] = e.target.value;
         setImag(newFormValues);
     }
 
-    let addFormFieldsImage = () => {
-        setImag([...imag, { imagesWebsiteName: "", imagesUrl: "" }])
+    let addFormFieldsImage = (id) => {
+        setImag([...imag, { imageName: "", imageUrl: "" }])
+        setValue(`imagesWebsiteName[${id}]`, '');
+        setValue(`imagesUrl[${id}]`, '');
     }
 
     let removeFormFieldsImage = (i) => {
-        let newFormValues = [...imag];
-        newFormValues.splice(i, 1);
-        setImag(newFormValues)
+        let imagData = imag.filter((fruit, index) => index !== i);
+        setValue(`imagesWebsiteName[${i}]`, '');
+        setValue(`imagesUrl[${i}]`, '');
+        imagData.map((item, index) => {
+            setValue(`imagesWebsiteName[${index}]`, item.imageName);
+            setValue(`imagesUrl[${index}]`, item.imageUrl)
+        })
+        setImag(imagData)
     }
 
-
-
     //  for Technology edit the Technology inputs
-    let handleChangeTech = (i, e) => {
+    let handleChangeTech = (i, name, e) => {
         let newFormValues = [...tech];
-        newFormValues[i][e.target.name] = e.target.value;
+        newFormValues[i] = e.target.value;
         setTech(newFormValues);
     }
 
-    let addFormFieldsTech = () => {
-        setTech([...tech, { name: "" }])
+    let addFormFieldsTech = (id) => {
+        setTech([...tech, ""])
+        setValue(`technical[${id}]`, '');
     }
 
     let removeFormFieldsTech = (i) => {
-        let newFormValues = [...tech];
-        newFormValues.splice(i, 1);
-        setTech(newFormValues)
+        let technicalData = tech.filter((fruit, index) => index !== i);
+        setValue(`technical[${i}]`, '');
+        technicalData.map((item, index) => {
+            setValue(`technical[${index}]`, item);
+        })
+        setTech(technicalData)
     }
-
-
-
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -423,6 +420,7 @@ export default function EditProduct({ content }) {
                         })}
                     </Select>
                 </FormControl>
+
                 {templateType === 1 ? <FormControl fullWidth sx={{ mt: 2 }}>
                     <InputLabel id="subCategorySelect">Template SubCategory</InputLabel>
                     <Select label="Template SubCategory" name="subCategory" labelId="subCategorySelect" value={defaultDropdownSubCategory} onChange={(e) => { setDefaultDropdownSubCategory(e.target?.value) }}>
@@ -455,7 +453,7 @@ export default function EditProduct({ content }) {
                 {templateType === 2 &&
                     <FormControl fullWidth sx={{ mt: 2 }}>
                         <InputLabel id="productTypeSelect">Product Type</InputLabel>
-                        <Select label="Product Type" name="productType" labelId="softwareTypeSelect" value={defaultProductType} >
+                        <Select label="Product Type"  name="productType" labelId="softwareTypeSelect" value={defaultProductType} onChange={(e) => { setDefaultProductType(e.target?.value) }}>
                             {masterProductType !== undefined && masterProductType.length > 0 && masterProductType.map((item) => {
                                 return <MenuItem value={item?.type}>{item?.type}</MenuItem>
                             })}
@@ -470,7 +468,24 @@ export default function EditProduct({ content }) {
                             return e.industryId === item?.id
                         })
                         let checked = industry.length > 0 ? true : false;
-                        return <><Checkbox name="indrusty" id={item?.industry} value={item?.id} checked={checked} /><label htmlFor={item?.industry}>{item?.industry}</label></>
+                        return <><Checkbox name="indrusty" id={item?.industry} value={item?.id} checked={checked} onChange={(e) => {
+                            if (e.target.checked === true) {
+                                let obj = {
+                                    "industry": { industry: e.target.id },
+                                    "industryId": parseInt(e.target.value),
+                                    "templateindrustyId": null
+                                }
+                                setDefaultIndustry([...defaultIndustry, obj])
+                            }
+                            else {
+
+                                let dataindus = defaultIndustry.filter((a) => {
+                                    return a.industryId !== parseInt(e?.target?.value)
+                                })
+                                setDefaultIndustry(dataindus)
+                            }
+
+                        }} /><label htmlFor={item?.industry}>{item?.industry}</label></>
                     })}
                 </Box>
 
@@ -493,22 +508,24 @@ export default function EditProduct({ content }) {
                     {
                         font.map((elm, idx) => {
                             return <div className="box" key={elm?.id}>
-                                <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center' }} style={{ display: dltFeild === false ? 'none' : 'flex' }}>
-                                    <Box style={{ display: 'flex', gap: '20px', marginBottom: '10px', width: '100%' }}>
-                                        <TextField fullWidth label="Font Name" variant="outlined" name="name" value={elm?.fontName} onChange={e => handleChangeFont(idx, e)}  {...register(`fontName[${idx}]`)} InputLabelProps={{
+                                <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', marginBottom: '10px', alignItems: 'center' }} style={{ display: dltFeild === false ? 'none' : 'flex' }}>
+                                    <Box style={{ display: 'flex', gap: '20px', width: '100%' }}>
+
+                                        <TextField fullWidth label="Font Name" variant="outlined" name="name" {...register(`fontName[${idx}]`, { onChange: (e) => { handleChangeFont(idx, 'fontName', e) } })} InputLabelProps={{
                                             shrink: true,
                                         }} />
-                                        <TextField fullWidth label="Paste Font URl here" variant="outlined" name="fontUrl" value={elm?.fontUrl} onChange={e => handleChangeFont(idx, e)} {...register(`fontUrl[${idx}]`)} InputLabelProps={{
+                                        <TextField fullWidth label="Paste Font URl here" variant="outlined" name="fontUrl" {...register(`fontUrl[${idx}]`, {
+                                            onChange: (e) => {
+                                                handleChangeFont(idx, 'fontUrl', e)
+                                            }
+                                        })} InputLabelProps={{
                                             shrink: true,
                                         }} />
                                     </Box>
                                     {font.length > 1 &&
                                         <Box>
                                             <div className="btn-box">
-                                                <button className="mr10" onClick={() => {
-                                                    //    removeIconField(elm)
-                                                    //    console.log(idx);
-                                                    //     iconremove(idx)
+                                                <button type="button" className="" onClick={() => {
                                                     removeFormFieldsFont(idx)
                                                 }}>Remove </button>
                                             </div>
@@ -518,33 +535,31 @@ export default function EditProduct({ content }) {
                                 </Box>
                                 <Box style={{ textAlign: 'right' }}>
                                     <div className="btn-box">
-                                        {font.length - 1 === idx && <button onClick={() => addFormFieldsFont()}>Add</button>}
+                                        {font.length - 1 === idx && <button type="button" onClick={() => addFormFieldsFont(font.length)}>Add</button>}
                                     </div>
                                 </Box>
                             </div>
                         })
                     }
 
-
                     <h3 style={{ marginTop: '16px', marginBottom: '16px' }}>Images</h3>
                     {
                         imag.map((elm, idx) => {
                             return <div className="box" key={elm?.id}>
-                                <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center' }} style={{ display: dltFeild === false ? 'none' : 'flex' }}>
-                                    <Box style={{ display: 'flex', gap: '20px', marginBottom: '10px', width: '100%' }}>
-                                        <TextField fullWidth label="Image Name" variant="outlined" name="name" value={elm?.imagesWebsiteName} onChange={e => handleChangeImage(idx, e)} {...register(`imagesWebsiteName[${idx}]`)} InputLabelProps={{
-                                            shrink: true,
-                                        }} />
-                                        <TextField fullWidth label="Paste Image URl here" variant="outlined" name="iconsUrl" value={elm?.imagesUrl} onChange={e => handleChangeImage(idx, e)} {...register(`imagesUrl[${idx}]`)} InputLabelProps={{
-                                            shrink: true,
-                                        }} />
+                                <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', marginBottom: '10px', alignItems: 'center' }} style={{ display: dltFeild === false ? 'none' : 'flex' }}>
+                                    <Box style={{ display: 'flex', gap: '20px', width: '100%' }}>
+                                        <TextField fullWidth label="Image Name" variant="outlined" name="imagesWebsiteName"
+                                            {...register(`imagesWebsiteName[${idx}]`, { onChange: (e) => { handleChangeImage(idx, 'imageName', e) } })} InputLabelProps={{
+                                                shrink: true,
+                                            }} />
+                                        <TextField fullWidth label="Paste Image URl here" variant="outlined" name="iconsUrl"
+                                            {...register(`imagesUrl[${idx}]`, { onChange: (e) => { handleChangeImage(idx, 'imageUrl', e) } })} InputLabelProps={{
+                                                shrink: true,
+                                            }} />
                                     </Box>
                                     {imag.length > 1 && <Box>
                                         <div className="btn-box">
-                                            <button className="mr10" onClick={() => {
-                                                //    removeIconField(elm)
-                                                //    console.log(idx);
-                                                //     iconremove(idx)
+                                            <button type="button" className="" onClick={() => {
                                                 removeFormFieldsImage(idx)
                                             }}>Remove </button>
                                         </div>
@@ -554,46 +569,34 @@ export default function EditProduct({ content }) {
                                 </Box>
                                 <Box style={{ textAlign: 'right' }}>
                                     <div className="btn-box">
-                                        {imag.length - 1 === idx && <button onClick={() => addFormFieldsImage()}>Add</button>}
+                                        {imag.length - 1 === idx && <button type="button" onClick={() => addFormFieldsImage(imag.length)}>Add</button>}
                                     </div>
                                 </Box>
                             </div>
                         })
                     }
-                    {/*    {
-                        imag.map((elm, idx) => {
-                            return <Box style={{ display: 'flex', gap: '50px', marginBottom: '10px' }}>
-                                <TextField fullWidth label="Font Name" variant="outlined" type="text" {...register(`imagesWebsiteName[${idx}]`)} name={`imagesWebsiteName${idx}`} InputLabelProps={{
-                                    shrink: true,
-                                }} />
-                                <TextField fullWidth label="Paste Font URl here" variant="outlined" type="text"  {...register(`imagesUrl[${idx}]`)} name={`imagesUrl${idx}`} InputLabelProps={{
-                                    shrink: true,
-                                }} />
-                            </Box>
-                        })
-                    } */}
-
 
                     <h3 style={{ marginTop: '16px', marginBottom: '16px' }}>Icons</h3>
-                    {console.log(icon, "====icons data")}
                     {
                         icon.map((elm, idx) => {
                             return <div className="box" key={elm?.id}>
-                                <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center' }} style={{ display: dltFeild === false ? 'none' : 'flex' }}>
+                                <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', marginBottom: '10px', alignItems: 'center' }} style={{ display: dltFeild === false ? 'none' : 'flex' }}>
 
-                                    <Box style={{ display: 'flex', gap: '20px', marginBottom: '10px', width: '100%' }}>
-                                        <TextField fullWidth label="Icon Name" variant="outlined" name="name" value={elm?.iconName} onChange={e => handleChange(idx, e)}  {...register(`icons.${idx}.iconsWebsiteName`)} InputLabelProps={{
-                                            shrink: true,
-                                        }} />
-                                        <TextField fullWidth label="Paste Icon URl here" variant="outlined" name="iconsUrl" value={elm?.iconUrl} onChange={e => handleChange(idx, e)} {...register(`icons.iconsUrl[${idx}]`)} InputLabelProps={{
-                                            shrink: true,
-                                        }} />
+                                    <Box style={{ display: 'flex', gap: '20px', width: '100%' }}>
+                                        <TextField fullWidth label="Icon Name" variant="outlined" name="iconsWebsiteName"
+                                            {...register(`iconsWebsiteName[${idx}]`, { onChange: (e) => { handleChange(idx, 'iconName', e) } })} InputLabelProps={{
+                                                shrink: true,
+                                            }} />
+                                        <TextField fullWidth label="Paste Icon URl here" variant="outlined" name="iconsUrl"
+                                            {...register(`iconsUrl[${idx}]`, { onChange: (e) => { handleChange(idx, 'iconUrl', e) } })} InputLabelProps={{
+                                                shrink: true,
+                                            }} />
                                     </Box>
 
                                     {icon.length > 1 &&
                                         <Box>
                                             <div className="btn-box">
-                                                <button className="mr10" onClick={() => {
+                                                <button type="button" className="" onClick={() => {
                                                     //    removeIconField(elm)
                                                     //    console.log(idx);
                                                     //     iconremove(idx)
@@ -606,37 +609,30 @@ export default function EditProduct({ content }) {
                                 </Box>
                                 <Box style={{ textAlign: 'right' }}>
                                     <div className="btn-box">
-                                        {icon.length - 1 === idx && <button onClick={() => addFormFields()}>Add</button>}
+                                        {icon.length - 1 === idx && <button type="button" onClick={() => addFormFields(icon.length)}>Add</button>}
                                     </div>
                                 </Box>
                             </div>
                         })
                     }
-
-
                 </Box>
 
                 <Box sx={{ mt: 2 }} >
                     <h2 style={{ marginTop: '16px' }}>Technical Details</h2>
-                    {/* {console.log(tech, "==tech")} */}
-
                     {
                         tech.map((elm, idx) => {
-                            console.log(elm.name, "techelm")
                             return <div className="box" key={elm?.id}>
-                                <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center' }} style={{ display: dltFeild === false ? 'none' : 'flex' }}>
-                                    <Box style={{ display: 'flex', gap: '20px', marginBottom: '10px', width: '100%' }}>
-                                        <TextField fullWidth label="Tech Name" variant="outlined" name="name" value={elm} onChange={e => handleChangeTech(idx, e)} {...register(`technical[${idx}]`)} InputLabelProps={{
-                                            shrink: true,
-                                        }} />
+                                <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', marginBottom: '10px', alignItems: 'center' }} style={{ display: dltFeild === false ? 'none' : 'flex' }}>
+                                    <Box style={{ display: 'flex', gap: '20px', width: '100%' }}>
+                                        <TextField fullWidth label="Tech Name" variant="outlined" name="technical"
+                                            {...register(`technical[${idx}]`, { onChange: (e) => { handleChangeTech(idx, 'technical', e) } })} InputLabelProps={{
+                                                shrink: true,
+                                            }} />
                                     </Box>
                                     {tech.length > 1 &&
                                         <Box>
                                             <div className="btn-box">
-                                                <button className="mr10" onClick={() => {
-                                                    //    removeIconField(elm)
-                                                    //    console.log(idx);
-                                                    //     iconremove(idx)
+                                                <button type="button" className="" onClick={() => {
                                                     removeFormFieldsTech(idx)
                                                 }}>Remove </button>
                                             </div>
@@ -646,7 +642,7 @@ export default function EditProduct({ content }) {
                                 </Box>
                                 <Box style={{ textAlign: 'right' }}>
                                     <div className="btn-box">
-                                        {tech.length - 1 === idx && <button onClick={() => addFormFieldsTech()}>Add</button>}
+                                        {tech.length - 1 === idx && <button type="button" onClick={() => addFormFieldsTech(tech.length)}>Add</button>}
                                     </div>
                                 </Box>
                             </div>
@@ -753,3 +749,7 @@ export default function EditProduct({ content }) {
 EditProduct.getLayout = function getLayout(page) {
     return (<Layout variant="Dashboard">{page}</Layout>)
 };
+
+
+
+

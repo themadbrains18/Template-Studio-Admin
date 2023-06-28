@@ -17,15 +17,16 @@ function isValidFileType(fileName, fileType) {
 
 const schema = Yup.object().shape({
     category: Yup.string().required("This Field is Required !!"),
-    subCategory: Yup.string().required("This Field is Required !!"),
+    subCategory: Yup.array().optional(),
     softwareType: Yup.string().required("This Field is Required !"),
+    productType: Yup.string().optional(),
     name: Yup.string().required("This Field is Required !!").min(2).max(32),
     version: Yup.string().required("This Field is Required !!"),
     description: Yup.string().required("This Field is Required !!").min(80).max(5000),
     variant: Yup.string().required("This Field is Required !!").min(3).max(100),
     sourceFilePassword: Yup.string().required("This Field is Required !!"),
-    industry: Yup.array().min(1,'Please select atleast 1 Industry').required().typeError('Please select atleast 1 Industry'),
-    
+    industry: Yup.array().min(1, 'Please select atleast 1 Industry').required().typeError('Please select atleast 1 Industry'),
+
     technical: Yup.array().of(
         Yup.object().shape({
             name: Yup.string().required(" This field is required"),
@@ -60,7 +61,7 @@ const schema = Yup.object().shape({
             iconUrl: Yup.string().required("Icon url is required"),
         })
     ).required(),
-    price: Yup.number().required('This field is required'),
+    price: Yup.number().optional(),
 
 });
 
@@ -130,7 +131,7 @@ export default function UploadProduct() {
                 })
                 .catch(err => {
                     console.log(err)
-                    
+
                 })
         } catch (error) {
 
@@ -155,7 +156,7 @@ export default function UploadProduct() {
                 })
                 .catch(err => {
                     console.log(err)
-                    
+
                 })
         } catch (error) {
 
@@ -180,7 +181,7 @@ export default function UploadProduct() {
                 })
                 .catch(err => {
                     console.log(err)
-                    
+
                 })
         } catch (error) {
 
@@ -205,7 +206,7 @@ export default function UploadProduct() {
                 })
                 .catch(err => {
                     console.log(err)
-                    
+
                 })
         } catch (error) {
 
@@ -230,14 +231,12 @@ export default function UploadProduct() {
                 })
                 .catch(err => {
                     console.log(err)
-                    
+
                 })
         } catch (error) {
 
         }
     }
-
- 
 
     const selectCategory = (e) => {
         setValue('category', e)
@@ -291,7 +290,9 @@ export default function UploadProduct() {
         formData.append('sourceFilePassword', data.sourceFilePassword);
         formData.append('subCategory', data.subCategory);
         formData.append('variant', data.variant);
+        formData.append('productType', data.productType);
 
+        console.log(data.productType,"productTypeeee")
         // formData.append('font',data.font);
         // formData.append('icons', data.icons);
         // formData.append('imagesNameUrl', data.imagesNameUrl);
@@ -328,20 +329,22 @@ export default function UploadProduct() {
                     if (result.message) {
                         alert(result.message);
                     } else {
-                        
+
                     }
                 }
             })
             .catch(err => {
                 console.log(err)
-                
+
             })
     }
+
+    const onInvalid = (errors) => console.error(errors)
 
 
     return (
         <>
-            <form style={{ maxWidth: "800px", width: "100%" }} encType="multipart/form-data" onSubmit={handleSubmit(onSubmitHandler)}>
+            <form style={{ maxWidth: "800px", width: "100%" }} encType="multipart/form-data" onSubmit={handleSubmit(onSubmitHandler, onInvalid)}>
                 <h1>Upload Product</h1>
                 <FormControl fullWidth sx={{ mt: 5 }} >
                     <InputLabel id="categorySelect">Select Template Type</InputLabel>
@@ -364,7 +367,7 @@ export default function UploadProduct() {
                 </FormControl> : <Box sx={{ mt: 2 }}>
                     <h3>Technology Type</h3>
                     {masterSubCategory !== undefined && masterSubCategory.length > 0 && masterSubCategory.map((item) => {
-                        return <><Checkbox name="subCategory" id={item?.subCategory} value={item?.id} />    <label htmlFor={item?.subCategory}>{item?.subCategory}</label></>
+                        return <><Checkbox name="subCategory" id={item?.subCategory} {...register('subCategory')} value={item?.id} />    <label htmlFor={item?.subCategory}>{item?.subCategory}</label></>
                     })}
                 </Box>}
 
@@ -381,13 +384,14 @@ export default function UploadProduct() {
                 {templateType === 2 &&
                     <FormControl fullWidth sx={{ mt: 2 }}>
                         <InputLabel id="productTypeSelect">Product Type</InputLabel>
-                        <Select label="Product Type" name="productType" labelId="softwareTypeSelect" >
+                        <Select {...register('productType')} label="Product Type" name="productType" labelId="softwareTypeSelect" >
                             {masterProductType !== undefined && masterProductType.length > 0 && masterProductType.map((item) => {
                                 return <MenuItem value={item?.type}>{item?.type}</MenuItem>
                             })}
                         </Select>
                     </FormControl>
                 }
+      
 
                 <Box sx={{ mt: 2 }}>
                     <h3>Indrusty</h3>
@@ -437,7 +441,7 @@ export default function UploadProduct() {
                                     </div>
                                 </Box>
                             </Box>
-                            <Box style={{ textAlign: 'right' }}>
+                            <Box style={{ textAlign: 'right', marginTop:'10px' }}>
                                 <div className="btn-box">
                                     {fontfields.length - 1 === index && <button onClick={() => fontappend({ fontName: '', fontUrl: '' })}>Add</button>}
                                 </div>
@@ -482,7 +486,7 @@ export default function UploadProduct() {
                                     </div>
                                 </Box>
                             </Box>
-                            <Box style={{ textAlign: 'right' }}>
+                            <Box style={{ textAlign: 'right', marginTop:'10px' }}>
                                 <div className="btn-box">
                                     {imagefields.length - 1 === index && <button onClick={() => imageappend({ name: '', imageUrl: '' })}>Add</button>}
                                 </div>
@@ -527,7 +531,7 @@ export default function UploadProduct() {
                                     </div>
                                 </Box>
                             </Box>
-                            <Box style={{ textAlign: 'right' }}>
+                            <Box style={{ textAlign: 'right', marginTop:'10px' }}>
                                 <div className="btn-box">
                                     {iconfields.length - 1 === index && <button onClick={() => iconappend({ name: '', iconUrl: '' })}>Add</button>}
                                 </div>
@@ -572,7 +576,7 @@ export default function UploadProduct() {
                                     </div>
                                 </Box>
                             </Box>
-                            <Box style={{ textAlign: 'right' }}>
+                            <Box style={{ textAlign: 'right', marginTop:'10px' }}>
                                 <div className="btn-box">
                                     {technicalfields.length - 1 === index && <button onClick={() => technicalappend({ name: '' })}>Add</button>}
                                 </div>
