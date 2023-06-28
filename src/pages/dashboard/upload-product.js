@@ -17,7 +17,7 @@ function isValidFileType(fileName, fileType) {
 
 const schema = Yup.object().shape({
     category: Yup.string().required("This Field is Required !!"),
-    subCategory: Yup.array().optional(),
+    subCategory: Yup.string().optional(),
     softwareType: Yup.string().required("This Field is Required !"),
     productType: Yup.string().optional(),
     name: Yup.string().required("This Field is Required !!").min(2).max(32),
