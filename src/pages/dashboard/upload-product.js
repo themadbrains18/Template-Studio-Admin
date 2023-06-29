@@ -5,6 +5,7 @@ import { FormControl, InputLabel, MenuItem, Select, Box, TextField, Checkbox, Bu
 import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
+import { red } from "@mui/material/colors";
 
 const MAX_FILE_SIZE = 102400; //100KB
 
@@ -17,7 +18,8 @@ function isValidFileType(fileName, fileType) {
 
 const schema = Yup.object().shape({
     category: Yup.string().required("This Field is Required !!"),
-    subCategory: Yup.string().optional(),
+    // subCategory: Yup.array().optional(),
+    subCategory : Yup.lazy(val => (Array.isArray(val) ? Yup.array().of(Yup.string()) : Yup.string())),
     softwareType: Yup.string().required("This Field is Required !"),
     productType: Yup.string().optional(),
     name: Yup.string().required("This Field is Required !!").min(2).max(32),
@@ -62,6 +64,7 @@ const schema = Yup.object().shape({
         })
     ).required(),
     price: Yup.number().optional(),
+
 
 });
 
@@ -290,7 +293,14 @@ export default function UploadProduct() {
         formData.append('sourceFilePassword', data.sourceFilePassword);
         formData.append('subCategory', data.subCategory);
         formData.append('variant', data.variant);
-        formData.append('productType', data.productType);
+        if(data.category === 2){
+            formData.append('productType', data.productType);
+        }
+        
+        if(data.price!=undefined){
+            formData.append('price', data.price);
+        }
+        
 
         console.log(data.productType,"productTypeeee")
         // formData.append('font',data.font);
@@ -314,6 +324,8 @@ export default function UploadProduct() {
         formData.append('industry', data.industry);
 
         const localToken = localStorage.getItem('token');
+
+        // return;
         fetch("http://localhost:7777/dashboard/upload", {
             method: "POST",
             headers: { 'token': localToken },
@@ -353,7 +365,7 @@ export default function UploadProduct() {
                             return <MenuItem key={item?.id} value={item?.id}>{item?.category}</MenuItem>
                         })}
                     </Select>
-                    {errors.category && <p>{errors.category.message}</p>}
+                    {errors.category && <p style={{color:'red'}}>{errors.category.message}</p>}
                 </FormControl>
 
                 {templateType === 1 ? <FormControl fullWidth sx={{ mt: 2 }}>
@@ -363,7 +375,7 @@ export default function UploadProduct() {
                             return <MenuItem value={item?.id} >{item?.subCategory}</MenuItem>
                         })}
                     </Select>
-                    {errors.subCategory && <p>{errors.subCategory.message}</p>}
+                    {errors.subCategory && <p style={{color:'red'}}>{errors.subCategory.message}</p>}
                 </FormControl> : <Box sx={{ mt: 2 }}>
                     <h3>Technology Type</h3>
                     {masterSubCategory !== undefined && masterSubCategory.length > 0 && masterSubCategory.map((item) => {
@@ -378,7 +390,7 @@ export default function UploadProduct() {
                             return <MenuItem value={item?.id}>{item?.softwareType}</MenuItem>
                         })}
                     </Select>
-                    {errors.softwareType && <p>{errors.softwareType.message}</p>}
+                    {errors.softwareType && <p style={{color:'red'}}>{errors.softwareType.message}</p>}
                 </FormControl>
 
                 {templateType === 2 &&
@@ -398,18 +410,18 @@ export default function UploadProduct() {
                     {masterIndustry !== undefined && masterIndustry.length > 0 && masterIndustry.map((item) => {
                         return <><Checkbox {...register('industry')} name="industry" id={item?.industry} value={item?.id} />    <label htmlFor={item?.industry}>{item?.industry}</label></>
                     })}
-                    {errors.industry && <p>{errors.industry.message}</p>}
+                    {errors.industry && <p style={{color:'red'}}>{errors.industry.message}</p>}
                 </Box>
 
                 <TextField {...register("name")} fullWidth label="Name" variant="outlined" type="text" sx={{ mt: 2 }} name="name" />
-                {errors.name && <p>{errors.name.message}</p>}
+                {errors.name && <p style={{color:'red'}}>{errors.name.message}</p>}
                 <TextField {...register("version")} fullWidth label="Version" variant="outlined" type="text" sx={{ mt: 2 }} name="version" />
-                {errors.version && <p>{errors.version.message}</p>}
+                {errors.version && <p style={{color:'red'}}>{errors.version.message}</p>}
 
                 <Box sx={{ mt: 2 }} >
                     <h2 style={{ marginBottom: '16px' }}>Description</h2>
                     <textarea {...register("description")} name="description" style={{ width: "100%", minHeight: "150px" }} />
-                    {errors.description && <p>{errors.description.message}</p>}
+                    {errors.description && <p style={{color:'red'}}>{errors.description.message}</p>}
                 </Box>
 
                 <Box sx={{ mt: 2 }} >
@@ -423,7 +435,7 @@ export default function UploadProduct() {
                                         placeholder="Enter Name"
                                         {...register(`font.${index}.fontName`)}
                                     />
-                                    {errors?.font?.[index]?.fontName && <p>{errors?.font?.[index]?.fontName.message}</p>}
+                                    {errors?.font?.[index]?.fontName && <p style={{color:'red'}}>{errors?.font?.[index]?.fontName.message}</p>}
 
                                 </Box>
                                 <Box style={{ width: '50%' }}>
@@ -431,7 +443,7 @@ export default function UploadProduct() {
                                         placeholder="Enter Url" name={`font.${index}.fontUrl`}
                                         {...register(`font.${index}.fontUrl`)}
                                     />
-                                    {errors?.font?.[index]?.fontUrl && <p>{errors?.font?.[index]?.fontUrl.message}</p>}
+                                    {errors?.font?.[index]?.fontUrl && <p style={{color:'red'}}>{errors?.font?.[index]?.fontUrl.message}</p>}
                                 </Box>
                                 <Box>
                                     <div className="btn-box">
@@ -468,7 +480,7 @@ export default function UploadProduct() {
                                         placeholder="Enter Name"
                                         {...register(`imagesNameUrl.${index}.name`)}
                                     />
-                                    {errors?.imagesNameUrl?.[index]?.name && <p>{errors?.imagesNameUrl?.[index]?.name.message}</p>}
+                                    {errors?.imagesNameUrl?.[index]?.name && <p style={{color:'red'}}>{errors?.imagesNameUrl?.[index]?.name.message}</p>}
 
                                 </Box>
                                 <Box style={{ width: '50%' }}>
@@ -476,7 +488,7 @@ export default function UploadProduct() {
                                         placeholder="Enter url"
                                         {...register(`imagesNameUrl.${index}.imageUrl`)}
                                     />
-                                    {errors?.imagesNameUrl?.[index]?.imageUrl && <p>{errors?.imagesNameUrl?.[index]?.imageUrl.message}</p>}
+                                    {errors?.imagesNameUrl?.[index]?.imageUrl && <p style={{color:'red'}}>{errors?.imagesNameUrl?.[index]?.imageUrl.message}</p>}
                                 </Box>
                                 <Box>
                                     <div className="btn-box">
@@ -513,7 +525,7 @@ export default function UploadProduct() {
                                         placeholder="Enter Name"
                                         {...register(`icons.${index}.name`)}
                                     />
-                                    {errors?.icons?.[index]?.name && <p>{errors?.icons?.[index]?.name.message}</p>}
+                                    {errors?.icons?.[index]?.name && <p style={{color:'red'}}>{errors?.icons?.[index]?.name.message}</p>}
 
                                 </Box>
                                 <Box style={{ width: '50%' }}>
@@ -521,7 +533,7 @@ export default function UploadProduct() {
                                         placeholder="Enter Url"
                                         {...register(`icons.${index}.iconUrl`)}
                                     />
-                                    {errors?.icons?.[index]?.iconUrl && <p>{errors?.icons?.[index]?.iconUrl.message}</p>}
+                                    {errors?.icons?.[index]?.iconUrl && <p style={{color:'red'}}>{errors?.icons?.[index]?.iconUrl.message}</p>}
                                 </Box>
                                 <Box>
                                     <div className="btn-box">
@@ -564,7 +576,7 @@ export default function UploadProduct() {
                                         placeholder="Technical Name"
                                         {...register(`technical.${index}.name`)}
                                     />
-                                    {errors?.technical?.[index] && <p>{errors?.technical?.[index]?.name?.message}</p>}
+                                    {errors?.technical?.[index] && <p style={{color:'red'}}>{errors?.technical?.[index]?.name?.message}</p>}
 
                                 </Box>
 
@@ -584,19 +596,19 @@ export default function UploadProduct() {
                         </div>
                     ))}
                 </Box>
-                {errors.technical && <p>{errors.technical.message}</p>}
+                {errors.technical && <p style={{color:'red'}}>{errors.technical.message}</p>}
 
                 <h2 style={{ marginTop: '16px' }}>Product Variant</h2>
                 <TextField {...register("variant")} fullWidth label="variant" variant="outlined" type="text" sx={{ mt: 2 }} name="variant" />
-                {errors.variant && <p>{errors.variant.message}</p>}
+                {errors.variant && <p style={{color:'red'}}>{errors.variant.message}</p>}
 
                 <Box sx={{ mt: 2 }}>Source File</Box>
                 <input variant="outlined" type="file" {...register("sourceFile")} name="sourceFile" />
-                {errors.sourceFile && <p>{errors.sourceFile.message}</p>}
+                {errors.sourceFile && <p style={{color:'red'}}>{errors.sourceFile.message}</p>}
 
                 <Box sx={{ mt: 2 }}>Source File Password</Box>
                 <TextField {...register("sourceFilePassword")} fullWidth variant="outlined" type="text" name="sourceFilePassword" />
-                {errors.sourceFilePassword && <p>{errors.sourceFilePassword.message}</p>}
+                {errors.sourceFilePassword && <p style={{color:'red'}}>{errors.sourceFilePassword.message}</p>}
 
                 <Box sx={{ mt: 2 }}>Slider Images</Box>
                 <input variant="outlined" type="file" multiple={true} name="sliderImages" {...register("sliderImages")} />
@@ -606,12 +618,12 @@ export default function UploadProduct() {
 
                 <Box sx={{ mt: 2 }}>SEO Keywords</Box>
                 <TextField {...register("seoKeywords")} fullWidth label="SEO Keywords" variant="outlined" type="text" sx={{ mt: 2 }} name="seoKeywords" />
-                {errors.seoKeywords && <p>{errors.seoKeywords.message}</p>}
+                {errors.seoKeywords && <p style={{color:'red'}}>{errors.seoKeywords.message}</p>}
 
                 <Box sx={{ mt: 2 }} >
                     Paid
                     <Checkbox checked={paid} onChange={() => setPaid(!paid)} name="paid" />
-                    {paid && <TextField fullWidth label="Price in Doller" variant="outlined" type="number" name="price" {...register("price")} />}
+                    {paid && <TextField fullWidth label="Price in Doller" variant="outlined" type="number" name="price" {...register("price", {required : false, value : 0})} />}
                 </Box>
 
                 <Button variant="contained" size="large" sx={{ mt: 3 }} type="submit">Submit</Button>
