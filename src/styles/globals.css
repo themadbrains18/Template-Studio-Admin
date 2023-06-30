@@ -4,5 +4,11 @@
   margin: 0;
 }
 .btn-box button{
-  padding: 6px 30px;
+  padding: 2px 14px;
+}
+
+@media only screen and (min-width: 600px)  {
+  .btn-box button{
+    padding: 6px 30px;
+  }
 }

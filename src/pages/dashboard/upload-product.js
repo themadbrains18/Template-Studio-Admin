@@ -19,7 +19,7 @@ function isValidFileType(fileName, fileType) {
 const schema = Yup.object().shape({
     category: Yup.string().required("This Field is Required !!"),
     // subCategory: Yup.array().optional(),
-    subCategory : Yup.lazy(val => (Array.isArray(val) ? Yup.array().of(Yup.string()) : Yup.string())),
+    subCategory: Yup.lazy(val => (Array.isArray(val) ? Yup.array().of(Yup.string()) : Yup.string())),
     softwareType: Yup.string().required("This Field is Required !"),
     productType: Yup.string().optional(),
     name: Yup.string().required("This Field is Required !!").min(2).max(32),
@@ -293,16 +293,16 @@ export default function UploadProduct() {
         formData.append('sourceFilePassword', data.sourceFilePassword);
         formData.append('subCategory', data.subCategory);
         formData.append('variant', data.variant);
-        if(data.category === 2){
+        if (data.category === 2) {
             formData.append('productType', data.productType);
         }
-        
-        if(data.price!=undefined){
+
+        if (data.price != undefined) {
             formData.append('price', data.price);
         }
-        
 
-        console.log(data.productType,"productTypeeee")
+
+        console.log(data.productType, "productTypeeee")
         // formData.append('font',data.font);
         // formData.append('icons', data.icons);
         // formData.append('imagesNameUrl', data.imagesNameUrl);
@@ -356,7 +356,7 @@ export default function UploadProduct() {
 
     return (
         <>
-            <form style={{ maxWidth: "800px", width: "100%" }} encType="multipart/form-data" onSubmit={handleSubmit(onSubmitHandler, onInvalid)}>
+            <form style={{ maxWidth: "800px", width: "100%", paddingLeft: "15px", paddingRight: "15px" }} encType="multipart/form-data" onSubmit={handleSubmit(onSubmitHandler, onInvalid)}>
                 <h1>Upload Product</h1>
                 <FormControl fullWidth sx={{ mt: 5 }} >
                     <InputLabel id="categorySelect">Select Template Type</InputLabel>
@@ -365,7 +365,7 @@ export default function UploadProduct() {
                             return <MenuItem key={item?.id} value={item?.id}>{item?.category}</MenuItem>
                         })}
                     </Select>
-                    {errors.category && <p style={{color:'red'}}>{errors.category.message}</p>}
+                    {errors.category && <p style={{ color: 'red' }}>{errors.category.message}</p>}
                 </FormControl>
 
                 {templateType === 1 ? <FormControl fullWidth sx={{ mt: 2 }}>
@@ -375,7 +375,7 @@ export default function UploadProduct() {
                             return <MenuItem value={item?.id} >{item?.subCategory}</MenuItem>
                         })}
                     </Select>
-                    {errors.subCategory && <p style={{color:'red'}}>{errors.subCategory.message}</p>}
+                    {errors.subCategory && <p style={{ color: 'red' }}>{errors.subCategory.message}</p>}
                 </FormControl> : <Box sx={{ mt: 2 }}>
                     <h3>Technology Type</h3>
                     {masterSubCategory !== undefined && masterSubCategory.length > 0 && masterSubCategory.map((item) => {
@@ -390,7 +390,7 @@ export default function UploadProduct() {
                             return <MenuItem value={item?.id}>{item?.softwareType}</MenuItem>
                         })}
                     </Select>
-                    {errors.softwareType && <p style={{color:'red'}}>{errors.softwareType.message}</p>}
+                    {errors.softwareType && <p style={{ color: 'red' }}>{errors.softwareType.message}</p>}
                 </FormControl>
 
                 {templateType === 2 &&
@@ -403,47 +403,49 @@ export default function UploadProduct() {
                         </Select>
                     </FormControl>
                 }
-      
+
 
                 <Box sx={{ mt: 2 }}>
-                    <h3>Indrusty</h3>
+                    <h3>Industry</h3>
                     {masterIndustry !== undefined && masterIndustry.length > 0 && masterIndustry.map((item) => {
-                        return <><Checkbox {...register('industry')} name="industry" id={item?.industry} value={item?.id} />    <label htmlFor={item?.industry}>{item?.industry}</label></>
+                        return <>
+                            <Checkbox {...register('industry')} name="industry" id={item?.industry} value={item?.id} />    
+                            <label htmlFor={item?.industry} style={{ marginRight: '10px' }}>{item?.industry}</label>
+                        </>
                     })}
-                    {errors.industry && <p style={{color:'red'}}>{errors.industry.message}</p>}
+                    {errors.industry && <p style={{ color: 'red' }}>{errors.industry.message}</p>}
                 </Box>
 
                 <TextField {...register("name")} fullWidth label="Name" variant="outlined" type="text" sx={{ mt: 2 }} name="name" />
-                {errors.name && <p style={{color:'red'}}>{errors.name.message}</p>}
+                {errors.name && <p style={{ color: 'red' }}>{errors.name.message}</p>}
                 <TextField {...register("version")} fullWidth label="Version" variant="outlined" type="text" sx={{ mt: 2 }} name="version" />
-                {errors.version && <p style={{color:'red'}}>{errors.version.message}</p>}
+                {errors.version && <p style={{ color: 'red' }}>{errors.version.message}</p>}
 
                 <Box sx={{ mt: 2 }} >
                     <h2 style={{ marginBottom: '16px' }}>Description</h2>
                     <textarea {...register("description")} name="description" style={{ width: "100%", minHeight: "150px" }} />
-                    {errors.description && <p style={{color:'red'}}>{errors.description.message}</p>}
+                    {errors.description && <p style={{ color: 'red' }}>{errors.description.message}</p>}
                 </Box>
 
                 <Box sx={{ mt: 2 }} >
                     <h3 style={{ marginBottom: '16px' }}>Fonts Used</h3>
-
                     {fontfields.map((field, index) => (
                         <div className="box" key={field.id}>
-                            <Box style={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} sx={{ gap: { xs: "10px", md: "20px" }, }}>
                                 <Box style={{ width: '50%' }}>
-                                    <TextField fullWidth label="Font Name" variant="outlined" type="text" sx={{ mt: 2 }} name={`font.${index}.fontName`}
+                                    <TextField fullWidth label="Font Name" variant="outlined" type="text" name={`font.${index}.fontName`}
                                         placeholder="Enter Name"
                                         {...register(`font.${index}.fontName`)}
                                     />
-                                    {errors?.font?.[index]?.fontName && <p style={{color:'red'}}>{errors?.font?.[index]?.fontName.message}</p>}
+                                    {errors?.font?.[index]?.fontName && <p style={{ color: 'red' }}>{errors?.font?.[index]?.fontName.message}</p>}
 
                                 </Box>
                                 <Box style={{ width: '50%' }}>
-                                    <TextField fullWidth label="Font Url" variant="outlined" type="text" sx={{ mt: 2 }}
+                                    <TextField fullWidth label="Font Url" variant="outlined" type="text"
                                         placeholder="Enter Url" name={`font.${index}.fontUrl`}
                                         {...register(`font.${index}.fontUrl`)}
                                     />
-                                    {errors?.font?.[index]?.fontUrl && <p style={{color:'red'}}>{errors?.font?.[index]?.fontUrl.message}</p>}
+                                    {errors?.font?.[index]?.fontUrl && <p style={{ color: 'red' }}>{errors?.font?.[index]?.fontUrl.message}</p>}
                                 </Box>
                                 <Box>
                                     <div className="btn-box">
@@ -453,7 +455,7 @@ export default function UploadProduct() {
                                     </div>
                                 </Box>
                             </Box>
-                            <Box style={{ textAlign: 'right', marginTop:'10px' }}>
+                            <Box style={{ textAlign: 'right', marginTop: '10px' }}>
                                 <div className="btn-box">
                                     {fontfields.length - 1 === index && <button onClick={() => fontappend({ fontName: '', fontUrl: '' })}>Add</button>}
                                 </div>
@@ -462,33 +464,24 @@ export default function UploadProduct() {
 
                         </div>
                     ))}
-                    <h3 style={{ marginTop: '16px' }}>Images</h3>
-                    {/* <Box style={{ display: 'flex', gap: '20px' }}>
-                        <TextField fullWidth label="Image Name" variant="outlined" type="text" sx={{ mt: 2 }} name="imagesWebsiteName[0]" />
-                        <TextField fullWidth label="Paste Image URl here" variant="outlined" type="text" sx={{ mt: 2 }} name="imagesUrl[0]" />
-                    </Box>
-                    <Box style={{ display: 'flex', gap: '20px' }} >
-                        <TextField fullWidth label="Image Name" variant="outlined" type="text" sx={{ mt: 2 }} name="imagesWebsiteName[1]" />
-                        <TextField fullWidth label="Paste Image URl here" variant="outlined" type="text" sx={{ mt: 2 }} name="imagesUrl[1]" />
-                    </Box> */}
-
+                    <h3 style={{ marginTop: '16px', marginBottom: '16px' }}>Images</h3>
                     {imagefields.map((field, index) => (
                         <div className="box" key={field.id}>
-                            <Box style={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} sx={{ gap: { xs: "10px", md: "20px" }, }}>
                                 <Box style={{ width: '50%' }}>
-                                    <TextField fullWidth label="Image Name" variant="outlined" type="text" sx={{ mt: 2 }}
+                                    <TextField fullWidth label="Image Name" variant="outlined" type="text"
                                         placeholder="Enter Name"
                                         {...register(`imagesNameUrl.${index}.name`)}
                                     />
-                                    {errors?.imagesNameUrl?.[index]?.name && <p style={{color:'red'}}>{errors?.imagesNameUrl?.[index]?.name.message}</p>}
+                                    {errors?.imagesNameUrl?.[index]?.name && <p style={{ color: 'red' }}>{errors?.imagesNameUrl?.[index]?.name.message}</p>}
 
                                 </Box>
                                 <Box style={{ width: '50%' }}>
-                                    <TextField fullWidth label="Image Url" variant="outlined" type="text" sx={{ mt: 2 }}
+                                    <TextField fullWidth label="Image Url" variant="outlined" type="text"
                                         placeholder="Enter url"
                                         {...register(`imagesNameUrl.${index}.imageUrl`)}
                                     />
-                                    {errors?.imagesNameUrl?.[index]?.imageUrl && <p style={{color:'red'}}>{errors?.imagesNameUrl?.[index]?.imageUrl.message}</p>}
+                                    {errors?.imagesNameUrl?.[index]?.imageUrl && <p style={{ color: 'red' }}>{errors?.imagesNameUrl?.[index]?.imageUrl.message}</p>}
                                 </Box>
                                 <Box>
                                     <div className="btn-box">
@@ -498,7 +491,7 @@ export default function UploadProduct() {
                                     </div>
                                 </Box>
                             </Box>
-                            <Box style={{ textAlign: 'right', marginTop:'10px' }}>
+                            <Box style={{ textAlign: 'right', marginTop: '10px' }}>
                                 <div className="btn-box">
                                     {imagefields.length - 1 === index && <button onClick={() => imageappend({ name: '', imageUrl: '' })}>Add</button>}
                                 </div>
@@ -506,34 +499,24 @@ export default function UploadProduct() {
                         </div>
                     ))}
 
-                    <h3 style={{ marginTop: '16px' }}>Icons</h3>
-                    {/* <Box style={{ display: 'flex', gap: '20px' }} >
-
-                        <TextField fullWidth label="Icon Name" variant="outlined" type="text" sx={{ mt: 2 }} name="iconsWebsiteName[0]" />
-                        <TextField fullWidth label="Paste Icon URL here" variant="outlined" type="text" sx={{ mt: 2 }} name="iconsUrl[0]" />
-                    </Box>
-                    <Box style={{ display: 'flex', gap: '20px' }} >
-                        <TextField fullWidth label="Icon Name" variant="outlined" type="text" sx={{ mt: 2 }} name="iconsWebsiteName[1]" />
-                        <TextField fullWidth label="Paste Icon URl here" variant="outlined" type="text" sx={{ mt: 2 }} name="iconsUrl[1]" />
-                    </Box> */}
-
+                    <h3 style={{ marginTop: '16px', marginBottom: '16px' }}>Icons</h3>
                     {iconfields.map((field, index) => (
                         <div className="box" key={field.id}>
-                            <Box style={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} sx={{ gap: { xs: "10px", md: "20px" }, }}>
                                 <Box style={{ width: '50%' }}>
-                                    <TextField fullWidth label="Icon Name" variant="outlined" type="text" sx={{ mt: 2 }}
+                                    <TextField fullWidth label="Icon Name" variant="outlined" type="text"
                                         placeholder="Enter Name"
                                         {...register(`icons.${index}.name`)}
                                     />
-                                    {errors?.icons?.[index]?.name && <p style={{color:'red'}}>{errors?.icons?.[index]?.name.message}</p>}
+                                    {errors?.icons?.[index]?.name && <p style={{ color: 'red' }}>{errors?.icons?.[index]?.name.message}</p>}
 
                                 </Box>
                                 <Box style={{ width: '50%' }}>
-                                    <TextField fullWidth label="Icon Url" variant="outlined" type="text" sx={{ mt: 2 }}
+                                    <TextField fullWidth label="Icon Url" variant="outlined" type="text"
                                         placeholder="Enter Url"
                                         {...register(`icons.${index}.iconUrl`)}
                                     />
-                                    {errors?.icons?.[index]?.iconUrl && <p style={{color:'red'}}>{errors?.icons?.[index]?.iconUrl.message}</p>}
+                                    {errors?.icons?.[index]?.iconUrl && <p style={{ color: 'red' }}>{errors?.icons?.[index]?.iconUrl.message}</p>}
                                 </Box>
                                 <Box>
                                     <div className="btn-box">
@@ -543,7 +526,7 @@ export default function UploadProduct() {
                                     </div>
                                 </Box>
                             </Box>
-                            <Box style={{ textAlign: 'right', marginTop:'10px' }}>
+                            <Box style={{ textAlign: 'right', marginTop: '10px' }}>
                                 <div className="btn-box">
                                     {iconfields.length - 1 === index && <button onClick={() => iconappend({ name: '', iconUrl: '' })}>Add</button>}
                                 </div>
@@ -553,30 +536,16 @@ export default function UploadProduct() {
                 </Box>
 
                 <Box sx={{ mt: 2 }} >
-                    <h2 style={{ marginTop: '16px' }}>Technical Details</h2>
-                    {/* <Box style={{ display: 'flex', gap: '20px' }} >
-                        <TextField fullWidth label="item1" variant="outlined" type="text" sx={{ mt: 2 }} name="technical[0]" />
-                        <TextField fullWidth label="item2" variant="outlined" type="text" sx={{ mt: 2 }} name="technical[1]" />
-                    </Box>
-
-                    <Box style={{ display: 'flex', gap: '20px' }} >
-                        <TextField fullWidth label="item3" variant="outlined" type="text" sx={{ mt: 2 }} name="technical[2]" />
-                        <TextField fullWidth label="item4" variant="outlined" type="text" sx={{ mt: 2 }} name="technical[3]" />
-                    </Box>
-                    <Box style={{ display: 'flex', gap: '20px' }} >
-                        <TextField fullWidth label="item5" variant="outlined" type="text" sx={{ mt: 2 }} name="technical[4]" />
-                        <TextField fullWidth label="item6" variant="outlined" type="text" sx={{ mt: 2 }} name="technical[5]" />
-                    </Box> */}
-
+                    <h2 style={{ marginBottom: '16px' }}>Technical Details</h2>
                     {technicalfields.map((field, index) => (
                         <div className="box" key={field.id}>
                             <Box className="technical" style={{ display: 'flex', gap: '20px', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <Box style={{ width: '100%' }}>
-                                    <TextField fullWidth label="Technical Name" variant="outlined" type="text" sx={{ mt: 2 }}
+                                    <TextField fullWidth label="Technical Name" variant="outlined" type="text"
                                         placeholder="Technical Name"
                                         {...register(`technical.${index}.name`)}
                                     />
-                                    {errors?.technical?.[index] && <p style={{color:'red'}}>{errors?.technical?.[index]?.name?.message}</p>}
+                                    {errors?.technical?.[index] && <p style={{ color: 'red' }}>{errors?.technical?.[index]?.name?.message}</p>}
 
                                 </Box>
 
@@ -588,7 +557,7 @@ export default function UploadProduct() {
                                     </div>
                                 </Box>
                             </Box>
-                            <Box style={{ textAlign: 'right', marginTop:'10px' }}>
+                            <Box style={{ textAlign: 'right', marginTop: '10px' }}>
                                 <div className="btn-box">
                                     {technicalfields.length - 1 === index && <button onClick={() => technicalappend({ name: '' })}>Add</button>}
                                 </div>
@@ -596,19 +565,19 @@ export default function UploadProduct() {
                         </div>
                     ))}
                 </Box>
-                {errors.technical && <p style={{color:'red'}}>{errors.technical.message}</p>}
+                {errors.technical && <p style={{ color: 'red' }}>{errors.technical.message}</p>}
 
                 <h2 style={{ marginTop: '16px' }}>Product Variant</h2>
                 <TextField {...register("variant")} fullWidth label="variant" variant="outlined" type="text" sx={{ mt: 2 }} name="variant" />
-                {errors.variant && <p style={{color:'red'}}>{errors.variant.message}</p>}
+                {errors.variant && <p style={{ color: 'red' }}>{errors.variant.message}</p>}
 
                 <Box sx={{ mt: 2 }}>Source File</Box>
                 <input variant="outlined" type="file" {...register("sourceFile")} name="sourceFile" />
-                {errors.sourceFile && <p style={{color:'red'}}>{errors.sourceFile.message}</p>}
+                {errors.sourceFile && <p style={{ color: 'red' }}>{errors.sourceFile.message}</p>}
 
                 <Box sx={{ mt: 2 }}>Source File Password</Box>
                 <TextField {...register("sourceFilePassword")} fullWidth variant="outlined" type="text" name="sourceFilePassword" />
-                {errors.sourceFilePassword && <p style={{color:'red'}}>{errors.sourceFilePassword.message}</p>}
+                {errors.sourceFilePassword && <p style={{ color: 'red' }}>{errors.sourceFilePassword.message}</p>}
 
                 <Box sx={{ mt: 2 }}>Slider Images</Box>
                 <input variant="outlined" type="file" multiple={true} name="sliderImages" {...register("sliderImages")} />
@@ -618,12 +587,12 @@ export default function UploadProduct() {
 
                 <Box sx={{ mt: 2 }}>SEO Keywords</Box>
                 <TextField {...register("seoKeywords")} fullWidth label="SEO Keywords" variant="outlined" type="text" sx={{ mt: 2 }} name="seoKeywords" />
-                {errors.seoKeywords && <p style={{color:'red'}}>{errors.seoKeywords.message}</p>}
+                {errors.seoKeywords && <p style={{ color: 'red' }}>{errors.seoKeywords.message}</p>}
 
                 <Box sx={{ mt: 2 }} >
                     Paid
                     <Checkbox checked={paid} onChange={() => setPaid(!paid)} name="paid" />
-                    {paid && <TextField fullWidth label="Price in Doller" variant="outlined" type="number" name="price" {...register("price", {required : false, value : 0})} />}
+                    {paid && <TextField fullWidth label="Price in Doller" variant="outlined" type="number" name="price" {...register("price", { required: false, value: 0 })} />}
                 </Box>
 
                 <Button variant="contained" size="large" sx={{ mt: 3 }} type="submit">Submit</Button>

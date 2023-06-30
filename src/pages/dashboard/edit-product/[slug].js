@@ -488,7 +488,7 @@ export default function EditProduct({ content }) {
 
     return (
         <>
-            <form style={{ maxWidth: "800px", width: "100%" }} encType="multipart/form-data" onSubmit={handleSubmit(handleSubmits, onInvalid)}>
+            <form style={{ maxWidth: "800px", width: "100%", paddingLeft: "15px", paddingRight: "15px"  }} encType="multipart/form-data" onSubmit={handleSubmit(handleSubmits, onInvalid)}>
                 <h1>{mainProduct?.name}</h1>
                 <FormControl fullWidth sx={{ mt: 5 }} >
                     <InputLabel id="categorySelect">Select Template Type</InputLabel>
@@ -612,7 +612,7 @@ export default function EditProduct({ content }) {
                         font.map((elm, idx) => {
                             return <div className="box" key={elm?.id}>
                                 <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', marginBottom: '10px', alignItems: 'center' }} style={{ display: dltFeild === false ? 'none' : 'flex' }}>
-                                    <Box style={{ display: 'flex', gap: '20px', width: '100%' }}>
+                                    <Box style={{ display: 'flex', width: '100%' }} sx={{ gap: { xs: "10px", md: "20px"}, }}>
                                         <Box style={{ width: '100%' }}>
                                             <TextField fullWidth label="Font Name" variant="outlined" name={`fontName[${idx}]`} {...register(`fontName[${idx}]`, { onChange: (e) => { handleChangeFont(idx, 'fontName', e) } })} InputLabelProps={{
                                                 shrink: true,
@@ -656,7 +656,7 @@ export default function EditProduct({ content }) {
                         imag.map((elm, idx) => {
                             return <div className="box" key={elm?.id}>
                                 <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', marginBottom: '10px', alignItems: 'center' }} style={{ display: dltFeild === false ? 'none' : 'flex' }}>
-                                    <Box style={{ display: 'flex', gap: '20px', width: '100%' }}>
+                                <Box style={{ display: 'flex', width: '100%' }} sx={{ gap: { xs: "10px", md: "20px"}, }}>
                                         <TextField fullWidth label="Image Name" variant="outlined" name={`imagesWebsiteName[${idx}]`}
                                             {...register(`imagesWebsiteName[${idx}]`, { onChange: (e) => { handleChangeImage(idx, 'imageName', e) } })} InputLabelProps={{
                                                 shrink: true,
@@ -692,7 +692,7 @@ export default function EditProduct({ content }) {
                             return <div className="box" key={elm?.id}>
                                 <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', marginBottom: '10px', alignItems: 'center' }} style={{ display: dltFeild === false ? 'none' : 'flex' }}>
 
-                                    <Box style={{ display: 'flex', gap: '20px', width: '100%' }}>
+                                <Box style={{ display: 'flex', width: '100%' }} sx={{ gap: { xs: "10px", md: "20px"}, }}>
                                         <TextField fullWidth label="Icon Name" variant="outlined" name={`iconsWebsiteName[${idx}]`}
                                             {...register(`iconsWebsiteName[${idx}]`, { onChange: (e) => { handleChange(idx, 'iconName', e) } })} InputLabelProps={{
                                                 shrink: true,
@@ -705,14 +705,11 @@ export default function EditProduct({ content }) {
 
                                     {icon.length > 1 &&
                                         <Box>
-                                            <div className="btn-box">
+                                            <Box className="btn-box">
                                                 <button type="button" className="" onClick={() => {
-                                                    //    removeIconField(elm)
-                                                    //    console.log(idx);
-                                                    //     iconremove(idx)
                                                     removeFormFields(idx)
-                                                }}>Remove </button>
-                                            </div>
+                                                }} >Remove </button>
+                                            </Box>
                                         </Box>
                                     }
 
