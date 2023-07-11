@@ -20,7 +20,7 @@ const validationSchema = Yup.object().shape({
     variant: Yup.string().required('This field is required'),
     seoKeywords: Yup.string().required('This field is required'),
     // description: Yup.string().required('This field is required'),
-    description: Yup.string().required("This Field is Required !!").min(80).max(5000),
+    description: Yup.string().required("This Field is Required !!").min(50),
     sourceFilePassword: Yup.string().required('This field is required'),
     price: Yup.number().optional(),
     fontName: Yup.array().of(Yup.string().required('this field is required')).required('this field is required'),
@@ -46,6 +46,7 @@ const validationSchema = Yup.object().shape({
 export default function EditProduct({ content }) {
     let [paid, setPaid] = useState(false);
     let [mainProduct, setMainProduct] = useState({});
+
     let [masterCategory, setMasterCategory] = useState([]);
     let [masterSubCategory, setMasterSubCategory] = useState([]);
     let [masterSoftwareType, setMasterSoftwareType] = useState([]);
@@ -65,12 +66,16 @@ export default function EditProduct({ content }) {
     const [font, setFont] = useState([{ fontName: "", fontUrl: "" }])
     const [imag, setImag] = useState([{ imageName: "", imageUrl: "" }])
     const [icon, setIcon] = useState([{ iconName: "", iconUrl: "" }])
-
+    const [mainSoftwareType, setMainSoftwareType] = useState(1);
 
     const [dltFeild, setDltFeild] = useState(0);
 
     const [removedSlider, setRemoveSlider] = useState([]);
     const [removedFullPageImage, setRemovedFullPageImage] = useState([]);
+
+    const [disabledField, setDisabledField] = useState(false);
+
+    const [releventProduct, setReleventProduct] = useState([])
 
     const { slug } = router.query
 
@@ -82,6 +87,7 @@ export default function EditProduct({ content }) {
         getCategory();
         getIndustry();
         getProductType();
+
         if (slug != undefined) {
             getProductDetailBySlug();
         }
@@ -102,6 +108,7 @@ export default function EditProduct({ content }) {
                 .then(async result => {
                     if (result.status === 200) {
                         setMainProduct(result.data);
+                        gettingSoftwareTypes(result.data);
                         setValue('name', result?.data?.name);
                         setValue('version', result?.data?.version);
                         setValue('category', result?.data?.templatecategories[0]?.category?.category);
@@ -129,19 +136,19 @@ export default function EditProduct({ content }) {
                             setValue(`technical[${index}]`, item);
                         })
 
-                        result?.data?.templateindrusties.map((item, index)=>{
+                        result?.data?.templateindrusties.map((item, index) => {
                             setValue(`industry[${index}]`, item);
                         })
 
-                        if(result?.data?.templatecategories[0]?.categoryId === 2){
-                            result?.data?.templatesubcategories.map((item, index)=>{
+                        if (result?.data?.templatecategories[0]?.categoryId === 2) {
+                            result?.data?.templatesubcategories.map((item, index) => {
                                 setValue(`subCategory[${index}]`, item);
                             })
                         }
-                        else{
+                        else {
                             setValue(`subCategory`, result?.data?.templatesubcategories[0]?.subcategoryId);
                         }
-                        
+
 
                         setFont(result?.data?.fonts);
                         setImag(result?.data?.images);
@@ -152,7 +159,7 @@ export default function EditProduct({ content }) {
                         setFullPageImages(result?.data?.fullimages)
 
                         setPaid(result?.data?.price !== null ? true : false);
-                        setValue('price', result?.data?.price !== null ? result?.data?.price : 0);  
+                        setValue('price', result?.data?.price !== null ? result?.data?.price : 0);
 
                         setTemplateType(parseInt(result?.data?.templatecategories[0]?.categoryId));
 
@@ -162,6 +169,7 @@ export default function EditProduct({ content }) {
                         await getSoftwareType(parseInt(result?.data?.templatecategories[0]?.categoryId));
 
                         setDefaultSoftwareType(parseInt(result?.data?.templatesoftwaretypes[0]?.softwareTypeId));
+                        setMainSoftwareType(parseInt(result?.data?.templatesoftwaretypes[0]?.softwareTypeId))
                         setDefaultDropdownSubCategory(result?.data?.templatesubcategories[0]?.subcategoryId);
                         setDefaultSubCategory(result?.data?.templatesubcategories);
                         setDefaultIndustry(result?.data?.templateindrusties);
@@ -395,7 +403,7 @@ export default function EditProduct({ content }) {
     }
 
     const handleSubmits = (data) => {
-        
+
         const formData = new FormData();
 
         [...data?.sourceFile].forEach(file => {
@@ -420,7 +428,7 @@ export default function EditProduct({ content }) {
         formData.append('variant', data.variant);
         formData.append('productType', data.productType);
 
-        
+
         defaultIndustry.forEach(item => {
             formData.append(`industry[]`, item.industryId);
         });
@@ -439,20 +447,20 @@ export default function EditProduct({ content }) {
             formData.append(`imagesWebsiteName[]`, item.imageName);
             formData.append(`imagesUrl[]`, item.imageUrl);
         });
-    
+
         tech.forEach(item => {
             formData.append(`technical[]`, item);
         });
 
-        if(templateType === 2){
-            defaultSubCategory.forEach(item=>{
+        if (templateType === 2) {
+            defaultSubCategory.forEach(item => {
                 formData.append('subCategory[]', item.subCategoryId);
             })
         }
-        else if(templateType === 1){
+        else if (templateType === 1) {
             formData.append('subCategory[]', defaultDropdownSubCategory);
         }
-        
+
 
         formData.append('templateid', slug);
         formData.append('removedSlider', [removedSlider]);
@@ -460,35 +468,182 @@ export default function EditProduct({ content }) {
         const localToken = localStorage.getItem('token');
         formData.append('price', data.price);
 
-        // return;
-        fetch(`http://localhost:7777/dashboard/edit/${slug}`, {
-            method: "POST",
-            headers: { 'token': localToken },
-            body: formData
-        })
-            .then(response => response.json())
-            .then(async result => {
-                // console.log(result);
-                if (result.success) {
-                    alert(result.message);
-                } else {
-                    if (result.message) {
+        if (disabledField === true) {
+            // return;
+            fetch(`http://localhost:7777/dashboard/add/relevant/${slug}`, {
+                method: "POST",
+                headers: { 'token': localToken },
+                body: formData
+            })
+                .then(response => response.json())
+                .then(async result => {
+                    if (result.success) {
                         alert(result.message);
                     } else {
+                        if (result.message) {
+                            alert(result.message);
+                        } else {
 
+                        }
                     }
-                }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
+        else {
+            // return;
+            fetch(`http://localhost:7777/dashboard/edit/${slug}`, {
+                method: "POST",
+                headers: { 'token': localToken },
+                body: formData
             })
-            .catch(err => {
-                console.log(err)
-            })
+                .then(response => response.json())
+                .then(async result => {
+                    // console.log(result);
+                    if (result.success) {
+                        alert(result.message);
+                    } else {
+                        if (result.message) {
+                            alert(result.message);
+                        } else {
+
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
+
     }
 
     const onInvalid = (errors) => console.error(errors)
 
+    const gettingSoftwareTypes = (mainTemplate) => {
+        let array = []
+        mainTemplate?.relaventProducts?.map((item, index) => {
+            var soft = mainTemplate?.templatesoftwaretypes.filter((e) => {
+                return parseInt(item.id) === parseInt(e.relevantproductid)
+            })
+            array.push({ id: item.id, name: soft[0].softwaretype?.softwareType });
+        })
+
+        setReleventProduct(array);
+    }
+
+    const filterRelaventData = async (id) => {
+
+        let result = mainProduct?.relaventProducts.filter((item) => {
+            return item.id === id;
+        })
+        setValue('version', result[0]?.version);
+        setValue('variant', result[0]?.variant);
+        setValue('seoKeywords', result[0]?.seoKeywords);
+        setValue('description', result[0]?.description);
+
+        result[0]?.fonts.map((item, index) => {
+            setValue(`fontName[${index}]`, item.fontName);
+            setValue(`fontUrl[${index}]`, item.fontUrl)
+        })
+
+        result[0]?.images.map((item, index) => {
+            setValue(`imagesWebsiteName[${index}]`, item.imageName);
+            setValue(`imagesUrl[${index}]`, item.imageUrl)
+        })
+
+        result[0]?.icons.map((item, index) => {
+            setValue(`iconsWebsiteName[${index}]`, item.iconName);
+            setValue(`iconsUrl[${index}]`, item.iconUrl)
+        })
+
+        result[0]?.technical.map((item, index) => {
+            setValue(`technical[${index}]`, item);
+        })
+
+
+        setFont(result[0]?.fonts);
+        setImag(result[0]?.images);
+
+        setIcon(result[0]?.icons);
+        setTech(result[0]?.technical);
+
+        var soft = mainProduct?.templatesoftwaretypes.filter((e) => {
+            return parseInt(id) === parseInt(e.relevantproductid)
+        })
+
+        setDefaultSoftwareType(parseInt(soft[0].softwareTypeId));
+    }
+
+    const filterDefaultData = async() => {
+        setValue('name', mainProduct?.name);
+        setValue('version', mainProduct?.version);
+        setValue('category', mainProduct?.templatecategories[0]?.category?.category);
+        setValue('variant', mainProduct?.variant);
+        setValue('seoKeywords', mainProduct?.seoKeywords);
+        setValue('description', mainProduct?.description);
+        setValue('sourceFilePassword', mainProduct?.file?.sourceFilePassword);
+
+        mainProduct?.fonts.map((item, index) => {
+            setValue(`fontName[${index}]`, item.fontName);
+            setValue(`fontUrl[${index}]`, item.fontUrl)
+        })
+
+        mainProduct?.images.map((item, index) => {
+            setValue(`imagesWebsiteName[${index}]`, item.imageName);
+            setValue(`imagesUrl[${index}]`, item.imageUrl)
+        })
+
+        mainProduct?.icons.map((item, index) => {
+            setValue(`iconsWebsiteName[${index}]`, item.iconName);
+            setValue(`iconsUrl[${index}]`, item.iconUrl)
+        })
+
+        mainProduct?.technical.map((item, index) => {
+            setValue(`technical[${index}]`, item);
+        })
+
+        mainProduct?.templateindrusties.map((item, index) => {
+            setValue(`industry[${index}]`, item);
+        })
+
+        if (mainProduct?.templatecategories[0]?.categoryId === 2) {
+            mainProduct?.templatesubcategories.map((item, index) => {
+                setValue(`subCategory[${index}]`, item);
+            })
+        }
+        else {
+            setValue(`subCategory`, mainProduct?.templatesubcategories[0]?.subcategoryId);
+        }
+
+
+        setFont(mainProduct?.fonts);
+        setImag(mainProduct?.images);
+
+        setIcon(mainProduct?.icons);
+        setTech(mainProduct?.technical);
+        setSliderImages(mainProduct?.sliderimages);
+        setFullPageImages(mainProduct?.fullimages)
+
+        setPaid(mainProduct?.price !== null ? true : false);
+        setValue('price', mainProduct?.price !== null ? mainProduct?.price : 0);
+
+        setTemplateType(parseInt(mainProduct?.templatecategories[0]?.categoryId));
+
+        setDefaultProductType(mainProduct?.productType);
+
+        // await getSubcategory(parseInt(mainProduct?.templatecategories[0]?.categoryId));
+        // await getSoftwareType(parseInt(mainProduct?.templatecategories[0]?.categoryId));
+
+        setDefaultSoftwareType(parseInt(mainProduct?.templatesoftwaretypes[0]?.softwareTypeId));
+        setDefaultDropdownSubCategory(mainProduct?.templatesubcategories[0]?.subcategoryId);
+        setDefaultSubCategory(mainProduct?.templatesubcategories);
+        setDefaultIndustry(mainProduct?.templateindrusties);
+    }
+
     return (
         <>
-            <form style={{ maxWidth: "800px", width: "100%", paddingLeft: "15px", paddingRight: "15px"  }} encType="multipart/form-data" onSubmit={handleSubmit(handleSubmits, onInvalid)}>
+            <form style={{ maxWidth: "800px", width: "100%", paddingLeft: "15px", paddingRight: "15px" }} encType="multipart/form-data" onSubmit={handleSubmit(handleSubmits, onInvalid)}>
                 <h1>{mainProduct?.name}</h1>
                 <FormControl fullWidth sx={{ mt: 5 }} >
                     <InputLabel id="categorySelect">Select Template Type</InputLabel>
@@ -503,7 +658,7 @@ export default function EditProduct({ content }) {
 
                 {templateType === 1 ? <FormControl fullWidth sx={{ mt: 2 }}>
                     <InputLabel id="subCategorySelect">Template SubCategory</InputLabel>
-                    <Select label="Template SubCategory" {...register("subCategory")} name="subCategory" labelId="subCategorySelect" value={defaultDropdownSubCategory} onChange={(e) => { setDefaultDropdownSubCategory(e.target?.value) }}>
+                    <Select label="Template SubCategory" disabled={disabledField} {...register("subCategory")} name="subCategory" labelId="subCategorySelect" value={defaultDropdownSubCategory} onChange={(e) => { setDefaultDropdownSubCategory(e.target?.value) }}>
                         {masterSubCategory !== undefined && masterSubCategory.length > 0 && masterSubCategory.map((item) => {
                             return <MenuItem value={item?.id}>{item?.subCategory}</MenuItem>
                         })}
@@ -517,7 +672,7 @@ export default function EditProduct({ content }) {
                         })
                         let checked = subcategory.length > 0 ? true : false;
 
-                        return <><Checkbox name="subCategory" id={item?.subCategory} value={item?.id} {...register("subCategory", { required:true})} checked={checked} onChange={(e) => {
+                        return <><Checkbox name="subCategory" id={item?.subCategory} value={item?.id} {...register("subCategory", { required: true })} checked={checked} onChange={(e) => {
                             if (e.target.checked === true) {
                                 let obj = {
                                     "subcategory": { subCategory: e.target.id, categoryId: e.target.id },
@@ -541,7 +696,7 @@ export default function EditProduct({ content }) {
 
                 <FormControl fullWidth sx={{ mt: 2 }}>
                     <InputLabel id="softwareTypeSelect">{templateType === 1 ? 'Software Type' : 'Software Version'} </InputLabel>
-                    <Select label="Software Type" {...register("softwareType")} name="softwareType" labelId="softwareTypeSelect" value={defaultSoftwareType} onChange={(e) => { setDefaultSoftwareType(e.target?.value) }}>
+                    <Select label="Software Type"   {...register("softwareType")} name="softwareType" labelId="softwareTypeSelect" value={defaultSoftwareType} onChange={(e) => { setDefaultSoftwareType(e.target?.value) }}>
                         {masterSoftwareType !== undefined && masterSoftwareType.length > 0 && masterSoftwareType.map((item) => {
                             return <MenuItem value={item?.id}>{item?.softwareType}</MenuItem>
                         })}
@@ -559,14 +714,37 @@ export default function EditProduct({ content }) {
                     </FormControl>
                 }
 
+
+                {templateType === 1 &&
+
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+
+                    {releventProduct?.length>0 && masterSoftwareType !== undefined && masterSoftwareType.length > 0 && masterSoftwareType.map((item) => {
+                        if(item?.id === mainSoftwareType){
+                            return <Button variant="contained" size="large" sx={{ mt: 3 }} onClick={() => { filterDefaultData() }} type="button">View {item?.softwareType} </Button>
+                        }
+                    })}
+                        
+                        
+                        {releventProduct?.map((item) => {
+                            return <Button variant="contained" size="large" sx={{ mt: 3 }} onClick={() => { filterRelaventData(item.id) }} type="button">View {item.name} </Button>
+                        })}
+
+
+                        {(masterSoftwareType.length - 1) !== (mainProduct !== undefined && mainProduct?.relaventProducts != undefined && mainProduct?.relaventProducts.length) &&
+                            <Button variant="contained" size="large" sx={{ mt: 3 }} type="button" onClick={() => { setDisabledField(!disabledField) }}>{disabledField === true ? 'Remove Relevant' : 'Add New Relevant'}</Button>
+                        }
+
+                    </Box>}
+
                 <Box sx={{ mt: 2 }}>
-                    <h3>Indrusty</h3>
+                    <h3>Industry</h3>
                     {masterIndustry !== undefined && masterIndustry.length > 0 && masterIndustry.map((item) => {
                         let industry = defaultIndustry.filter((e) => {
                             return e.industryId === item?.id
                         })
                         let checked = industry.length > 0 ? true : false;
-                        return <><Checkbox name="industry" id={item?.industry} {...register('industry')} value={item?.id} checked={checked} onChange={(e) => {
+                        return <><Checkbox disabled={disabledField} name="industry" id={item?.industry} {...register('industry')} value={item?.id} checked={checked} onChange={(e) => {
                             if (e.target.checked === true) {
                                 let obj = {
                                     "industry": { industry: e.target.id },
@@ -588,7 +766,7 @@ export default function EditProduct({ content }) {
                     {errors.industry && <p style={{ color: 'red' }}>{errors.industry.message}</p>}
                 </Box>
 
-                <TextField fullWidth label="Name" variant="outlined" type="text" sx={{ mt: 2 }} InputLabelProps={{
+                <TextField  fullWidth label="Name" variant="outlined" type="text" sx={{ mt: 2 }} InputLabelProps={{
                     shrink: true,
                 }} {...register('name')} name="name" />
                 {errors.name && <p style={{ color: 'red' }}>{errors.name.message}</p>}
@@ -612,23 +790,23 @@ export default function EditProduct({ content }) {
                         font.map((elm, idx) => {
                             return <div className="box" key={elm?.id}>
                                 <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', marginBottom: '10px', alignItems: 'center' }} style={{ display: dltFeild === false ? 'none' : 'flex' }}>
-                                    <Box style={{ display: 'flex', width: '100%' }} sx={{ gap: { xs: "10px", md: "20px"}, }}>
+                                    <Box style={{ display: 'flex', width: '100%' }} sx={{ gap: { xs: "10px", md: "20px" }, }}>
                                         <Box style={{ width: '100%' }}>
                                             <TextField fullWidth label="Font Name" variant="outlined" name={`fontName[${idx}]`} {...register(`fontName[${idx}]`, { onChange: (e) => { handleChangeFont(idx, 'fontName', e) } })} InputLabelProps={{
                                                 shrink: true,
                                             }} />
-                                            { errors?.fontName && <p style={{ color: 'red' }}>{errors?.fontName.message}</p>}
+                                            {errors?.fontName && <p style={{ color: 'red' }}>{errors?.fontName.message}</p>}
                                         </Box>
                                         <Box style={{ width: '100%' }}>
-                                            <TextField fullWidth label="Paste Font URl here" variant="outlined" name={`fontUrl[{idx}]`} 
-                                            {...register(`fontUrl[${idx}]`, {
-                                                onChange: (e) => {
-                                                    handleChangeFont(idx, 'fontUrl', e)
-                                                }
-                                            })} InputLabelProps={{
-                                                shrink: true,
-                                            }} />
-                                            { errors?.fontUrl && <p style={{ color: 'red' }}>{errors?.fontUrl.message}</p>}
+                                            <TextField fullWidth label="Paste Font URl here" variant="outlined" name={`fontUrl[{idx}]`}
+                                                {...register(`fontUrl[${idx}]`, {
+                                                    onChange: (e) => {
+                                                        handleChangeFont(idx, 'fontUrl', e)
+                                                    }
+                                                })} InputLabelProps={{
+                                                    shrink: true,
+                                                }} />
+                                            {errors?.fontUrl && <p style={{ color: 'red' }}>{errors?.fontUrl.message}</p>}
                                         </Box>
                                     </Box>
                                     {font.length > 1 &&
@@ -656,12 +834,12 @@ export default function EditProduct({ content }) {
                         imag.map((elm, idx) => {
                             return <div className="box" key={elm?.id}>
                                 <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', marginBottom: '10px', alignItems: 'center' }} style={{ display: dltFeild === false ? 'none' : 'flex' }}>
-                                <Box style={{ display: 'flex', width: '100%' }} sx={{ gap: { xs: "10px", md: "20px"}, }}>
+                                    <Box style={{ display: 'flex', width: '100%' }} sx={{ gap: { xs: "10px", md: "20px" }, }}>
                                         <TextField fullWidth label="Image Name" variant="outlined" name={`imagesWebsiteName[${idx}]`}
                                             {...register(`imagesWebsiteName[${idx}]`, { onChange: (e) => { handleChangeImage(idx, 'imageName', e) } })} InputLabelProps={{
                                                 shrink: true,
                                             }} />
-                                            
+
                                         <TextField fullWidth label="Paste Image URl here" variant="outlined" name={`imagesUrl[${idx}]`}
                                             {...register(`imagesUrl[${idx}]`, { onChange: (e) => { handleChangeImage(idx, 'imageUrl', e) } })} InputLabelProps={{
                                                 shrink: true,
@@ -692,7 +870,7 @@ export default function EditProduct({ content }) {
                             return <div className="box" key={elm?.id}>
                                 <Box sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', marginBottom: '10px', alignItems: 'center' }} style={{ display: dltFeild === false ? 'none' : 'flex' }}>
 
-                                <Box style={{ display: 'flex', width: '100%' }} sx={{ gap: { xs: "10px", md: "20px"}, }}>
+                                    <Box style={{ display: 'flex', width: '100%' }} sx={{ gap: { xs: "10px", md: "20px" }, }}>
                                         <TextField fullWidth label="Icon Name" variant="outlined" name={`iconsWebsiteName[${idx}]`}
                                             {...register(`iconsWebsiteName[${idx}]`, { onChange: (e) => { handleChange(idx, 'iconName', e) } })} InputLabelProps={{
                                                 shrink: true,

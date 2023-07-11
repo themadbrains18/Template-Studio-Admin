@@ -75,7 +75,7 @@ export default function Signup() {
   }
   return (
     <>
-      <form style={{maxWidth: "500px",width: "100%"}} onSubmit={handleSubmit}>
+      <form style={{maxWidth: "500px",width: "100%", paddingLeft:"15px", paddingRight:"15px"}} onSubmit={handleSubmit}>
           <h1>Set Password</h1>
           <TextField fullWidth label="Otp" variant="outlined" type="text" sx={{ mt : 1}} value={formData.otp} name="otp" onChange={updateFormData}/>
           <TextField fullWidth label="Password" variant="outlined" type="text" sx={{ mt : 1,mb: 2}} value={formData.password} name="password" onInput={updateFormData}/>

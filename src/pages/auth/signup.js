@@ -53,7 +53,7 @@ export default function Signup() {
   }
   return (
     <>
-      <form style={{maxWidth: "500px",width: "100%"}} onSubmit={handleSubmit}>
+      <form style={{maxWidth: "500px",width: "100%", paddingLeft:"15px", paddingRight:"15px"}} onSubmit={handleSubmit}>
           <h1>Signup</h1>
           <TextField fullWidth label="Name" variant="outlined" type="text" sx={{ mt : 3}} value={formData.name} name="name" onInput={updateFormData}/>
           <TextField fullWidth label="Email" variant="outlined" type="email" sx={{ mt : 1}} value={formData.email} name="email" onInput={updateFormData}/>

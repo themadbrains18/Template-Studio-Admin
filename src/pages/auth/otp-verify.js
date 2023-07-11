@@ -75,7 +75,7 @@ export default function OtpVerify() {
 
   return (
     <>
-      <form style={{maxWidth: "500px",width: "100%"}} onSubmit={handleSubmit}>
+      <form style={{maxWidth: "500px",width: "100%", paddingLeft:"15px", paddingRight:"15px"}} onSubmit={handleSubmit}>
         <h1 style={{ marginBottom : '20px'}}>
           Otp
         </h1>

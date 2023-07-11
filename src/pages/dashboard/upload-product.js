@@ -24,7 +24,7 @@ const schema = Yup.object().shape({
     productType: Yup.string().optional(),
     name: Yup.string().required("This Field is Required !!").min(2).max(32),
     version: Yup.string().required("This Field is Required !!"),
-    description: Yup.string().required("This Field is Required !!").min(80).max(5000),
+    description: Yup.string().required("This Field is Required !!").min(50).max(5000),
     variant: Yup.string().required("This Field is Required !!").min(3).max(100),
     sourceFilePassword: Yup.string().required("This Field is Required !!"),
     industry: Yup.array().min(1, 'Please select atleast 1 Industry').required().typeError('Please select atleast 1 Industry'),

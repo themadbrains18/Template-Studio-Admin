@@ -60,11 +60,11 @@ export default function Index() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Template Name</TableCell>
-              <TableCell>Template Type</TableCell>
-              <TableCell align="right">Version</TableCell>
-              <TableCell align="right">Price</TableCell>
-              <TableCell align="right">Action</TableCell>
+              <TableCell> <b>Template Name</b></TableCell>
+              <TableCell><b>Template Type</b></TableCell>
+              <TableCell align="right"><b>Version</b></TableCell>
+              <TableCell align="right"><b>Price</b></TableCell>
+              <TableCell align="right"><b>Action</b></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
