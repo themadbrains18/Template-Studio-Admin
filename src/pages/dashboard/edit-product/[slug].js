@@ -67,6 +67,7 @@ export default function EditProduct({ content }) {
     const [imag, setImag] = useState([{ imageName: "", imageUrl: "" }])
     const [icon, setIcon] = useState([{ iconName: "", iconUrl: "" }])
     const [mainSoftwareType, setMainSoftwareType] = useState(1);
+    const [relevantTemplateId, setRelevantTemplateId] = useState(0);
 
     const [dltFeild, setDltFeild] = useState(0);
 
@@ -77,9 +78,13 @@ export default function EditProduct({ content }) {
 
     const [releventProduct, setReleventProduct] = useState([])
 
+    const box_shadow_btn = "box_shadow_btn"
+    const [activeBtn, setActiveBtn] = useState(0)
+
     const { slug } = router.query
 
     const formOptions = { resolver: yupResolver(validationSchema) };
+
 
     const { register, control, reset, setValue, formState: { errors }, clearErrors, handleSubmit } = useForm(formOptions);
 
@@ -168,8 +173,11 @@ export default function EditProduct({ content }) {
                         await getSubcategory(parseInt(result?.data?.templatecategories[0]?.categoryId));
                         await getSoftwareType(parseInt(result?.data?.templatecategories[0]?.categoryId));
 
-                        setDefaultSoftwareType(parseInt(result?.data?.templatesoftwaretypes[0]?.softwareTypeId));
-                        setMainSoftwareType(parseInt(result?.data?.templatesoftwaretypes[0]?.softwareTypeId))
+                        var soft = result?.data?.templatesoftwaretypes.filter((e) => {
+                            return e.relevantproductid === null
+                        })
+                        setDefaultSoftwareType(parseInt(soft[0]?.softwareTypeId));
+                        setMainSoftwareType(parseInt(soft[0]?.softwareTypeId))
                         setDefaultDropdownSubCategory(result?.data?.templatesubcategories[0]?.subcategoryId);
                         setDefaultSubCategory(result?.data?.templatesubcategories);
                         setDefaultIndustry(result?.data?.templateindrusties);
@@ -428,7 +436,6 @@ export default function EditProduct({ content }) {
         formData.append('variant', data.variant);
         formData.append('productType', data.productType);
 
-
         defaultIndustry.forEach(item => {
             formData.append(`industry[]`, item.industryId);
         });
@@ -463,12 +470,17 @@ export default function EditProduct({ content }) {
 
 
         formData.append('templateid', slug);
+        formData.append('relevantTemplateId', relevantTemplateId);
         formData.append('removedSlider', [removedSlider]);
         formData.append('removedFullPageImage', [removedFullPageImage]);
         const localToken = localStorage.getItem('token');
         formData.append('price', data.price);
 
         if (disabledField === true) {
+            if (mainSoftwareType === defaultSoftwareType) {
+                alert('Please choose another software type for relevant template.')
+                return;
+            }
             // return;
             fetch(`http://localhost:7777/dashboard/add/relevant/${slug}`, {
                 method: "POST",
@@ -521,12 +533,16 @@ export default function EditProduct({ content }) {
     const onInvalid = (errors) => console.error(errors)
 
     const gettingSoftwareTypes = (mainTemplate) => {
+
+        console.log(mainTemplate, "====mainTemplate?.relaventProducts");
+
+
         let array = []
         mainTemplate?.relaventProducts?.map((item, index) => {
             var soft = mainTemplate?.templatesoftwaretypes.filter((e) => {
                 return parseInt(item.id) === parseInt(e.relevantproductid)
             })
-            array.push({ id: item.id, name: soft[0].softwaretype?.softwareType });
+            array.push({ id: item.id, name: soft[0].softwaretype?.softwareType, softId: soft[0].softwareTypeId });
         })
 
         setReleventProduct(array);
@@ -534,13 +550,20 @@ export default function EditProduct({ content }) {
 
     const filterRelaventData = async (id) => {
 
+
         let result = mainProduct?.relaventProducts.filter((item) => {
             return item.id === id;
         })
+        setRelevantTemplateId(id);
+        setValue('name', result[0]?.name);
+        setValue('price', result[0]?.price);
         setValue('version', result[0]?.version);
         setValue('variant', result[0]?.variant);
         setValue('seoKeywords', result[0]?.seoKeywords);
         setValue('description', result[0]?.description);
+     
+
+
 
         result[0]?.fonts.map((item, index) => {
             setValue(`fontName[${index}]`, item.fontName);
@@ -551,7 +574,6 @@ export default function EditProduct({ content }) {
             setValue(`imagesWebsiteName[${index}]`, item.imageName);
             setValue(`imagesUrl[${index}]`, item.imageUrl)
         })
-
         result[0]?.icons.map((item, index) => {
             setValue(`iconsWebsiteName[${index}]`, item.iconName);
             setValue(`iconsUrl[${index}]`, item.iconUrl)
@@ -561,12 +583,23 @@ export default function EditProduct({ content }) {
             setValue(`technical[${index}]`, item);
         })
 
+        // result[0]?.sliderimages.map((item, index) => {
+        //     setValue(`sliderimages[${index}]`, item);
+        // })
+
+
+        // setFullPageImages(result[0]?.fullimages)
+        // setSliderImages(result[0]?.sliderimages);
+
+        console.log(result[0], "result[0]?.icons")
+
 
         setFont(result[0]?.fonts);
         setImag(result[0]?.images);
 
         setIcon(result[0]?.icons);
         setTech(result[0]?.technical);
+
 
         var soft = mainProduct?.templatesoftwaretypes.filter((e) => {
             return parseInt(id) === parseInt(e.relevantproductid)
@@ -575,7 +608,8 @@ export default function EditProduct({ content }) {
         setDefaultSoftwareType(parseInt(soft[0].softwareTypeId));
     }
 
-    const filterDefaultData = async() => {
+    const filterDefaultData = async () => {
+        setRelevantTemplateId(0);
         setValue('name', mainProduct?.name);
         setValue('version', mainProduct?.version);
         setValue('category', mainProduct?.templatecategories[0]?.category?.category);
@@ -632,10 +666,14 @@ export default function EditProduct({ content }) {
 
         setDefaultProductType(mainProduct?.productType);
 
-        // await getSubcategory(parseInt(mainProduct?.templatecategories[0]?.categoryId));
-        // await getSoftwareType(parseInt(mainProduct?.templatecategories[0]?.categoryId));
+        var soft = mainProduct?.templatesoftwaretypes.filter((e) => {
+            return e.relevantproductid === null
+        })
 
-        setDefaultSoftwareType(parseInt(mainProduct?.templatesoftwaretypes[0]?.softwareTypeId));
+        setDefaultSoftwareType(parseInt(soft[0]?.softwareTypeId));
+        setMainSoftwareType(parseInt(soft[0]?.softwareTypeId))
+
+        // setDefaultSoftwareType(parseInt(mainProduct?.templatesoftwaretypes[0]?.softwareTypeId));
         setDefaultDropdownSubCategory(mainProduct?.templatesubcategories[0]?.subcategoryId);
         setDefaultSubCategory(mainProduct?.templatesubcategories);
         setDefaultIndustry(mainProduct?.templateindrusties);
@@ -696,7 +734,25 @@ export default function EditProduct({ content }) {
 
                 <FormControl fullWidth sx={{ mt: 2 }}>
                     <InputLabel id="softwareTypeSelect">{templateType === 1 ? 'Software Type' : 'Software Version'} </InputLabel>
-                    <Select label="Software Type"   {...register("softwareType")} name="softwareType" labelId="softwareTypeSelect" value={defaultSoftwareType} onChange={(e) => { setDefaultSoftwareType(e.target?.value) }}>
+                    <Select label="Software Type"   {...register("softwareType")} name="softwareType" labelId="softwareTypeSelect" value={defaultSoftwareType} onChange={(e) => {
+
+                        let ss = releventProduct.filter((item) => {
+                            return item.softId === e.target?.value
+                        });
+
+                        if (ss.length > 0) {
+                            alert('This software type already in relevant.')
+                            return;
+                        }
+                        else if (disabledField === true && mainSoftwareType === e.target?.value) {
+                            alert('Please choose another software type for relevant template.')
+                            return;
+                        }
+                        else {
+                            setDefaultSoftwareType(e.target?.value)
+                        }
+
+                    }}>
                         {masterSoftwareType !== undefined && masterSoftwareType.length > 0 && masterSoftwareType.map((item) => {
                             return <MenuItem value={item?.id}>{item?.softwareType}</MenuItem>
                         })}
@@ -716,20 +772,16 @@ export default function EditProduct({ content }) {
 
 
                 {templateType === 1 &&
-
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-
-                    {releventProduct?.length>0 && masterSoftwareType !== undefined && masterSoftwareType.length > 0 && masterSoftwareType.map((item) => {
-                        if(item?.id === mainSoftwareType){
-                            return <Button variant="contained" size="large" sx={{ mt: 3 }} onClick={() => { filterDefaultData() }} type="button">View {item?.softwareType} </Button>
-                        }
-                    })}
-                        
-                        
-                        {releventProduct?.map((item) => {
-                            return <Button variant="contained" size="large" sx={{ mt: 3 }} onClick={() => { filterRelaventData(item.id) }} type="button">View {item.name} </Button>
+                        {releventProduct?.length > 0 && masterSoftwareType !== undefined && masterSoftwareType.length > 0 && masterSoftwareType.map((item, index) => {
+                            if (item?.id === mainSoftwareType) {
+                                return <Button variant="contained" size="large" className={`${activeBtn == 0 ? "box_shadow_btn" : ""}`} style={{ marginTop: "24px" }} onClick={() => { filterDefaultData(), setActiveBtn(0) }} type="button">View Main {item?.softwareType} </Button>
+                            }
                         })}
 
+                        {releventProduct?.map((item, index) => {
+                            return <Button variant="contained" size="large" className={`${activeBtn == (index + 1) ? "box_shadow_btn" : ""}`} sx={{ mt: 3 }} onClick={() => { filterRelaventData(item.id), setActiveBtn(index + 1) }} type="button">View Relevant {item.name} </Button>
+                        })}
 
                         {(masterSoftwareType.length - 1) !== (mainProduct !== undefined && mainProduct?.relaventProducts != undefined && mainProduct?.relaventProducts.length) &&
                             <Button variant="contained" size="large" sx={{ mt: 3 }} type="button" onClick={() => { setDisabledField(!disabledField) }}>{disabledField === true ? 'Remove Relevant' : 'Add New Relevant'}</Button>
@@ -766,7 +818,7 @@ export default function EditProduct({ content }) {
                     {errors.industry && <p style={{ color: 'red' }}>{errors.industry.message}</p>}
                 </Box>
 
-                <TextField  fullWidth label="Name" variant="outlined" type="text" sx={{ mt: 2 }} InputLabelProps={{
+                <TextField fullWidth label="Name" variant="outlined" type="text" sx={{ mt: 2 }} InputLabelProps={{
                     shrink: true,
                 }} {...register('name')} name="name" />
                 {errors.name && <p style={{ color: 'red' }}>{errors.name.message}</p>}

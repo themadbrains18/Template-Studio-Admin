@@ -22,7 +22,7 @@ const schema = Yup.object().shape({
     subCategory: Yup.lazy(val => (Array.isArray(val) ? Yup.array().of(Yup.string()) : Yup.string())),
     softwareType: Yup.string().required("This Field is Required !"),
     productType: Yup.string().optional(),
-    name: Yup.string().required("This Field is Required !!").min(2).max(32),
+    name: Yup.string().required("This Field is Required !!").min(2).max(100),
     version: Yup.string().required("This Field is Required !!"),
     description: Yup.string().required("This Field is Required !!").min(50).max(5000),
     variant: Yup.string().required("This Field is Required !!").min(3).max(100),
@@ -325,7 +325,7 @@ export default function UploadProduct() {
 
         const localToken = localStorage.getItem('token');
 
-        // return;
+    //    return;
         fetch("http://localhost:7777/dashboard/upload", {
             method: "POST",
             headers: { 'token': localToken },
